@@ -1,5 +1,5 @@
-# FoxExtends
-============
+FoxExtends
+==========
 
 > I like to think that the following features are what they would have implemented in version 10 of Visual FoxPro
 >
