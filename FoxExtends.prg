@@ -82,7 +82,7 @@ Function Split(tcString, tcDelimiter)
 	Return loString.Split(tcDelimiter)
 Endfunc
 
-Function MATCHES(tcString, tcPattern)
+Function MATCH(tcString, tcPattern)
 	_vfp.foxExtendsRegEx.Pattern = tcPattern
 	Return _vfp.foxExtendsRegEx.test(tcString)
 Endfunc
