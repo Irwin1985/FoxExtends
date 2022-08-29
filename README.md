@@ -11,8 +11,8 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 
 ## Examples
 
-```html
-- PAIR(tvKey, tvValue): create a *Key-Value* object with the data provided.
+```js
+- PAIR(tvKey, tvValue): create a Key-Value object with the data provided.
 ```
 ```xBase
 loPair = PAIR("name", "John")
