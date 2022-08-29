@@ -9,9 +9,12 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 
 [![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
 
-## Examples
+## Function documentation
 
-```js - PAIR(tvKey, tvValue): create a Key-Value object with the data provided.```
+```js 
+- PAIR(tvKey, tvValue): create a Key-Value object with the data provided.
+```
+### Example
 ```xBase
 loPair = PAIR("name", "John")
 ? loPair.key, loPair.value
