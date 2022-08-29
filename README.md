@@ -11,7 +11,7 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 
 ## Examples
 
-```json
+```html
 - PAIR(tvKey, tvValue): create a *Key-Value* object with the data provided.
 ```
 ```xBase
