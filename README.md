@@ -79,7 +79,7 @@ FOR EACH lcColor IN laColors
 ENDFOR
 
 // ================================================================================
-// 7. MATCHES(tcString, tcPattern): check if the tcPattern matches in the string provided. 
+// 7. MATCH(tcString, tcPattern): check if the tcPattern matches in the string provided. 
 // NOTE: this function relies on VBScript.RegExp
 // ================================================================================
 // Example
