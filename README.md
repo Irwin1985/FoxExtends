@@ -51,7 +51,7 @@ laCountries[2] = "COLOMBIA"
 laCountries[3] = "ARGENTINA"
 laCountries[4] = "ESPAÑA"
 // Remove and retrieve the removed element
-? APOP(@laCountries) && print ESPAÑA
+? APOP(@laCountries) // print ESPAÑA
 
 // =====================================================
 // 5. JOIN(tArray, tcStep): return a string with all array elements delitemited by tcStep
