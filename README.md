@@ -6,6 +6,7 @@ FoxExtends
 > Suggestions are welcome!
 
 Do you like or benefit from my work? please consider make a donation, a cup of coffee would be nice!
+
 [![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
 
 ## Examples
