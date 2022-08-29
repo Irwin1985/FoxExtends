@@ -77,3 +77,9 @@ loMyJson = STRTOJSON('{"name": "John", "age": 36}')
 ```xBase
 ? JSONTOSTR(loMyJson) && {"name": "John", "age": 36}
 ```
+
+- PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10): pretty prints up to ten values (sorry for this limitation).
+```xBase
+? PRINTF("Hello ${0}! My name is ${1} and I'm glad to ${2} you!", "world", "John", "meet")
+```
+
