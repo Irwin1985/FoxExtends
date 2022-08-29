@@ -10,9 +10,12 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 [![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
 
 ## Examples
+
+`
 ```diff
-- `- PAIR(tvKey, tvValue): create a *Key-Value* object with the data provided.`
+- PAIR(tvKey, tvValue): create a *Key-Value* object with the data provided.
 ```
+`
 ```xBase
 loPair = PAIR("name", "John")
 ? loPair.key, loPair.value
