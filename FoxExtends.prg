@@ -3,381 +3,394 @@
 **********************************************************************
 
 #IFNDEF FUNCTION_ARG_VALUE_INVALID
-	#DEFINE FUNCTION_ARG_VALUE_INVALID 11
-#ENDIF
+	#Define FUNCTION_ARG_VALUE_INVALID 11
+#Endif
 
 #IFNDEF JSONFOX_NOT_FOUND
-	#DEFINE JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
-#ENDIF
+	#Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
+#Endif
 
-FUNCTION PAIR(tvKey, tvValue)
-	LOCAL loPair
-	loPair = CREATEOBJECT('Empty')
-	ADDPROPERTY(loPair, 'key', tvKey)
-	ADDPROPERTY(loPair, 'value', tvValue)
-	RETURN loPair
-ENDFUNC
+If Type('_vfp.foxExtendsRegEx') != 'O'
+	=AddProperty(_vfp, 'foxExtendsRegEx', CreateObject("VBScript.RegExp"))
+	_vfp.foxExtendsRegEx.IgnoreCase = .T.
+	_vfp.foxExtendsRegEx.Global = .T.	
+EndIf
 
-FUNCTION ANYTOSTR(tvValue)
-	LOCAL loAnyToStr
-	loAnyToStr = CREATEOBJECT("AnyToString")
-	RETURN loAnyToStr.AnyToStr(@tvValue)
-ENDFUNC
+Function PAIR(tvKey, tvValue)
+	Local loPair
+	loPair = Createobject('Empty')
+	=AddProperty(loPair, 'key', tvKey)
+	=AddProperty(loPair, 'value', tvValue)
+	Return loPair
+Endfunc
 
-FUNCTION APUSH(tArray, tvItem)
-	IF TYPE('tArray', 1) != 'A'
-		ERROR FUNCTION_ARG_VALUE_INVALID
-	ENDIF
-	LOCAL lnIndex
-	lnIndex = ALEN(tArray, 1) + 1
-	DIMENSION tArray[lnIndex]
+Function ANYTOSTR(tvValue)
+	Local loAnyToStr
+	loAnyToStr = Createobject("AnyToString")
+	Return loAnyToStr.ANYTOSTR(@tvValue)
+Endfunc
+
+Function APUSH(tArray, tvItem)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	Endif
+	Local lnIndex
+	lnIndex = Alen(tArray, 1) + 1
+	Dimension tArray[lnIndex]
 	tArray[lnIndex] = tvItem
-ENDFUNC
+Endfunc
 
-FUNCTION APOP(tArray)
-	IF TYPE('tArray', 1) != 'A'
-		ERROR FUNCTION_ARG_VALUE_INVALID
-	ENDIF
-	LOCAL lnIndex, lvOldVal
-	lnIndex = ALEN(tArray, 1)
+Function APOP(tArray)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	Endif
+	Local lnIndex, lvOldVal
+	lnIndex = Alen(tArray, 1)
 	lnIndex = lnIndex - 1
-	IF lnIndex <= 0
+	If lnIndex <= 0
 		lnIndex = 1
-		DIMENSION tArray[lnIndex]
-		RETURN
-	ENDIF
+		Dimension tArray[lnIndex]
+		Return
+	Endif
 	lvOldVal = tArray[lnIndex+1]
-	DIMENSION tArray[lnIndex]
-	
-	RETURN lvOldVal
-ENDFUNC
+	Dimension tArray[lnIndex]
 
-FUNCTION JOIN(tArray, tcSep)
-	IF TYPE('tArray', 1) != 'A'
-		ERROR FUNCTION_ARG_VALUE_INVALID
-	ENDIF
+	Return lvOldVal
+Endfunc
 
-	LOCAL lcStr, i, lcVal
+Function Join(tArray, tcSep)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	Endif
+
+	Local lcStr, i, lcVal
 	lcStr = ''
-	FOR i = 1 TO ALEN(tArray)
+	For i = 1 To Alen(tArray)
 		lcVal = tArray[i]
-		IF i = 1 THEN
+		If i = 1 Then
 			lcStr = lcVal
-		ELSE
-			lcStr = lcStr + IIF(!EMPTY(tcSep), tcSep + lcVal, lcVal)
-		ENDIF
-	ENDFOR
-	RETURN lcStr
-ENDFUNC
+		Else
+			lcStr = lcStr + Iif(!Empty(tcSep), tcSep + lcVal, lcVal)
+		Endif
+	Endfor
+	Return lcStr
+Endfunc
 
+Function Split(tcString, tcDelimiter)
+	Local loString
+	loString = Createobject("TString", tcString)
+	Return loString.Split(tcDelimiter)
+Endfunc
 
-FUNCTION SPLIT(tcString, tcDelimiter)
-	LOCAL loString
-	loString = CREATEOBJECT("TString", tcString)
-	RETURN loString.split(tcDelimiter)
-ENDFUNC
+Function MATCHES(tcString, tcPattern)
+	_vfp.foxExtendsRegEx.Pattern = tcPattern
+	Return _vfp.foxExtendsRegEx.test(tcString)
+Endfunc
 
-
-FUNCTION MATCHES(tcString, tcPattern)
-	LOCAL loRegEx, lcValue, lbResult
-	loRegEx = CREATEOBJECT("VBScript.RegExp")
-	loRegEx.IgnoreCase = .T.
-	loRegEx.GLOBAL = .T.
-	lcValue = tcString
-
-	IF !EMPTY(lcValue)
-		loRegEx.PATTERN = tcPattern
-		lbResult = loRegEx.test(lcValue)
-	ENDIF
-	RELEASE loRegEx
-
-	RETURN lbResult
-ENDFUNC
-
-FUNCTION REVERSE(tcString)
-	LOCAL lcValue, i
+Function REVERSE(tcString)
+	Local lcValue, i
 	lcValue = ''
-	FOR i = LEN(ALLTRIM(tcString)) TO 1 STEP -1
-		lcValue = lcValue + SUBSTR(tcString, i, 1)
-	ENDFOR
+	For i = Len(Alltrim(tcString)) To 1 Step -1
+		lcValue = lcValue + Substr(tcString, i, 1)
+	Endfor
 
-	RETURN lcValue
-ENDFUNC
+	Return lcValue
+Endfunc
 
-FUNCTION JSONTOSTR(tvJsonObj)
-	IF !CHECKJSONAPP()
-		RETURN ''
-	ENDIF
-	
-	RETURN _SCREEN.JSON.STRINGIFY(tvJsonObj)	
-ENDFUNC
+Function JSONTOSTR(tvJsonObj)
+	If !CHECKJSONAPP()
+		Return ''
+	Endif
 
-FUNCTION STRTOJSON(tcJSONString)
-	IF !CHECKJSONAPP()
-		RETURN .Null.
-	ENDIF
-	
-	RETURN _SCREEN.JSON.PARSE(tcJSONString)
-ENDFUNC
+	Return _Screen.JSON.STRINGIFY(tvJsonObj)
+Endfunc
+
+Function STRTOJSON(tcJSONString)
+	If !CHECKJSONAPP()
+		Return .Null.
+	Endif
+
+	Return _Screen.JSON.PARSE(tcJSONString)
+Endfunc
+
+Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10)
+	Local loResult, i, loItem, lcValue, j
+
+	_vfp.foxExtendsRegEx.Pattern = "\${\d+}"
+	loResult = _vfp.foxExtendsRegEx.Execute(tcFormat)
+
+	If Type('loResult') != 'O'
+		Return tcFormat
+	Endif
+
+	For i = 1 To loResult.Count
+		loItem = loResult.Item[i-1] && zero based
+		j = Strextract(tcFormat, '${', '}')
+		lcValue = Evaluate("tvVal" + j)
+		tcFormat = Strtran(tcFormat, loItem.Value, Transform(lcValue))
+	Endfor
+
+	Return tcFormat
+Endfunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
 * ========================================================================================== *
-FUNCTION CHECKJSONAPP
+Function CHECKJSONAPP
 	* ¿DOES JSONFOX.APP EXIST?
-	IF !FILE("JSONFOX.APP")
-		ERROR JSONFOX_NOT_FOUND
-		RETURN .F.
-	ENDIF
+	If !File("JSONFOX.APP")
+		Error JSONFOX_NOT_FOUND
+		Return .F.
+	Endif
 
-	IF TYPE('_SCREEN.JSON') == 'O'
-		_SCREEN.JSON = .NULL.
-		=REMOVEPROPERTY(_SCREEN, 'JSON')
-	ENDIF
+	If Type('_SCREEN.JSON') == 'O'
+		_Screen.JSON = .Null.
+		=Removeproperty(_Screen, 'JSON')
+	Endif
 
-	DO "JSONFOX.APP"
-	RETURN .T.
-ENDFUNC
+	Do "JSONFOX.APP"
+	Return .T.
+Endfunc
 
 * AnyToString
-DEFINE CLASS AnyToString AS CUSTOM
-	#DEFINE USER_DEFINED_PEMS	'U'
-	#DEFINE ALL_MEMBERS			"PHGNUCIBR"
+Define Class AnyToString As Custom
+	#Define USER_DEFINED_PEMS	'U'
+	#Define ALL_MEMBERS			"PHGNUCIBR"
 	lCentury = .F.
 	cDateAct = ''
 	nOrden   = 0
 	cFlags 	 = ''
 
-	FUNCTION INIT
-		THIS.lCentury = SET("Century") == "OFF"
-		THIS.cDateAct = SET("Date")
-		SET CENTURY ON
-		SET DATE ANSI
-		MVCOUNT = 60000
-	ENDFUNC
+	Function Init
+		This.lCentury = Set("Century") == "OFF"
+		This.cDateAct = Set("Date")
+		Set Century On
+		Set Date Ansi
+		Mvcount = 60000
+	Endfunc
 
-	FUNCTION ToString(toRefObj, tcFlags)
+	Function ToString(toRefObj, tcFlags)
 		lPassByRef = .T.
-		TRY
-			EXTERNAL ARRAY toRefObj
-		CATCH
+		Try
+			External Array toRefObj
+		Catch
 			lPassByRef = .F.
-		ENDTRY
-		THIS.cFlags = EVL(tcFlags, ALL_MEMBERS)
-		IF lPassByRef
-			RETURN THIS.AnyToStr(@toRefObj)
-		ELSE
-			RETURN THIS.AnyToStr(toRefObj)
-		ENDIF
-	ENDFUNC
+		Endtry
+		This.cFlags = Evl(tcFlags, ALL_MEMBERS)
+		If lPassByRef
+			Return This.ANYTOSTR(@toRefObj)
+		Else
+			Return This.ANYTOSTR(toRefObj)
+		Endif
+	Endfunc
 
-	FUNCTION AnyToStr AS MEMO
-		LPARAMETERS tValue AS variant
-		TRY
-			EXTERNAL ARRAY tValue
-		CATCH
-		ENDTRY
-		DO CASE
-		CASE TYPE("tValue", 1) = 'A'
-			LOCAL k, j, lcArray
-			IF ALEN(tValue, 2) == 0
+	Function ANYTOSTR As Memo
+		Lparameters tValue As variant
+		Try
+			External Array tValue
+		Catch
+		Endtry
+		Do Case
+		Case Type("tValue", 1) = 'A'
+			Local k, j, lcArray
+			If Alen(tValue, 2) == 0
 				*# Unidimensional array
 				lcArray = '['
-				FOR k = 1 TO ALEN(tValue)
-					lcArray = lcArray + IIF(LEN(lcArray) > 1, ',', '')
-					TRY
-						=ACOPY(tValue[k], aLista)
-						lcArray = lcArray + THIS.AnyToStr(@aLista)
-					CATCH
-						lcArray = lcArray + THIS.AnyToStr(tValue[k])
-					ENDTRY
-				ENDFOR
+				For k = 1 To Alen(tValue)
+					lcArray = lcArray + Iif(Len(lcArray) > 1, ',', '')
+					Try
+						=Acopy(tValue[k], aLista)
+						lcArray = lcArray + This.ANYTOSTR(@aLista)
+					Catch
+						lcArray = lcArray + This.ANYTOSTR(tValue[k])
+					Endtry
+				Endfor
 				lcArray = lcArray + ']'
-			ELSE
+			Else
 				*# Multidimensional array support
 				lcArray = '['
-				FOR k = 1 TO ALEN(tValue, 1)
-					lcArray = lcArray + IIF(LEN(lcArray) > 1, ',', '')
+				For k = 1 To Alen(tValue, 1)
+					lcArray = lcArray + Iif(Len(lcArray) > 1, ',', '')
 
 					* # begin of rows
 					lcArray = lcArray + '['
-					FOR j = 1 TO ALEN(tValue, 2)
-						IF j > 1
+					For j = 1 To Alen(tValue, 2)
+						If j > 1
 							lcArray = lcArray + ','
-						ENDIF
-						TRY
-							=ACOPY(tValue[k, j], aLista)
-							lcArray = lcArray + THIS.AnyToStr(@aLista)
-						CATCH
-							lcArray = lcArray + THIS.AnyToStr(tValue[k, j])
-						ENDTRY
-					ENDFOR
+						Endif
+						Try
+							=Acopy(tValue[k, j], aLista)
+							lcArray = lcArray + This.ANYTOSTR(@aLista)
+						Catch
+							lcArray = lcArray + This.ANYTOSTR(tValue[k, j])
+						Endtry
+					Endfor
 					lcArray = lcArray + ']'
 					* # end of rows
-				ENDFOR
+				Endfor
 				lcArray = lcArray + ']'
-			ENDIF
-			RETURN lcArray
+			Endif
+			Return lcArray
 
-		CASE VARTYPE(tValue) = 'O'
-			LOCAL j, lcStr, lnTot
-			LOCAL ARRAY gaMembers(1)
+		Case Vartype(tValue) = 'O'
+			Local j, lcStr, lnTot
+			Local Array gaMembers(1)
 
 			lcStr = '{'
-			lnTot = AMEMBERS(gaMembers, tValue, 0, THIS.cFlags)
-			FOR j=1 TO lnTot
-				lcProp = LOWER(ALLTRIM(gaMembers[j]))
-				lcStr = lcStr + IIF(LEN(lcStr) > 1, ',', '') + '"' + lcProp + '":'
-				TRY
-					=ACOPY(tValue. &gaMembers[j], aCopia)
-					lcStr = lcStr + THIS.AnyToStr(@aCopia)
-				CATCH
-					TRY
-						lcStr = lcStr + THIS.AnyToStr(tValue. &gaMembers[j])
-					CATCH
+			lnTot = Amembers(gaMembers, tValue, 0, This.cFlags)
+			For j=1 To lnTot
+				lcProp = Lower(Alltrim(gaMembers[j]))
+				lcStr = lcStr + Iif(Len(lcStr) > 1, ',', '') + '"' + lcProp + '":'
+				Try
+					=Acopy(tValue. &gaMembers[j], aCopia)
+					lcStr = lcStr + This.ANYTOSTR(@aCopia)
+				Catch
+					Try
+						lcStr = lcStr + This.ANYTOSTR(tValue. &gaMembers[j])
+					Catch
 						lcStr = lcStr + "{}"
-					ENDTRY
-				ENDTRY
-			ENDFOR
+					Endtry
+				Endtry
+			Endfor
 
 			*//> Collection based class object support
 			llIsCollection = .F.
-			TRY
-				llIsCollection = (tValue.BASECLASS == "Collection" AND tValue.CLASS == "Collection" AND tValue.NAME == "Collection")
-			CATCH
-			ENDTRY
-			IF llIsCollection
-				lcComma   = IIF(RIGHT(lcStr, 1) != '{', ',', '')
+			Try
+				llIsCollection = (tValue.BaseClass == "Collection" And tValue.Class == "Collection" And tValue.Name == "Collection")
+			Catch
+			Endtry
+			If llIsCollection
+				lcComma   = Iif(Right(lcStr, 1) != '{', ',', '')
 				lcStr = lcStr + lcComma + '"Collection":['
-				FOR i=1 TO tValue.COUNT
-					lcStr = lcStr + IIF(i>1,',','') + THIS.AnyToStr(tValue.ITEM(i))
-				ENDFOR
+				For i=1 To tValue.Count
+					lcStr = lcStr + Iif(i>1,',','') + This.ANYTOSTR(tValue.Item(i))
+				Endfor
 				lcStr = lcStr + ']'
-			ENDIF
+			Endif
 			*//> Collection based class object support
 
 			lcStr = lcStr + '}'
-			RETURN lcStr
-		OTHERWISE
-			RETURN THIS.GetValue(tValue, VARTYPE(tValue))
-		ENDCASE
-	ENDFUNC
+			Return lcStr
+		Otherwise
+			Return This.GetValue(tValue, Vartype(tValue))
+		Endcase
+	Endfunc
 
-	FUNCTION DESTROY
-		IF THIS.lCentury
-			SET CENTURY OFF
-		ENDIF
-		lcDateAct = THIS.cDateAct
-		SET DATE &lcDateAct
-	ENDFUNC
+	Function Destroy
+		If This.lCentury
+			Set Century Off
+		Endif
+		lcDateAct = This.cDateAct
+		Set Date &lcDateAct
+	Endfunc
 
-	FUNCTION GetValue AS STRING
-		LPARAMETERS tcValue AS STRING, tctype AS CHARACTER
-		DO CASE
-		CASE tctype $ "CDTBGMQVWX"
-			DO CASE
-			CASE tctype = "D"
-				tcValue = '"' + STRTRAN(DTOC(tcValue), ".", "-") + '"'
-			CASE tctype = "T"
-				tcValue = '"' + STRTRAN(TTOC(tcValue), ".", "-") + '"'
-			OTHERWISE
-				IF tctype = "X"
+	Function GetValue As String
+		Lparameters tcValue As String, tctype As Character
+		Do Case
+		Case tctype $ "CDTBGMQVWX"
+			Do Case
+			Case tctype = "D"
+				tcValue = '"' + Strtran(Dtoc(tcValue), ".", "-") + '"'
+			Case tctype = "T"
+				tcValue = '"' + Strtran(Ttoc(tcValue), ".", "-") + '"'
+			Otherwise
+				If tctype = "X"
 					tcValue = "null"
-				ELSE
-					tcValue = THIS.getstring(tcValue)
-				ENDIF
-			ENDCASE
-			tcValue = ALLTRIM(tcValue)
-		CASE tctype $ "YFIN"
-			tcValue = STRTRAN(TRANSFORM(tcValue), ',', '.')
-		CASE tctype = "L"
-			tcValue = IIF(tcValue, "true", "false")
-		ENDCASE
-		RETURN tcValue
-	ENDFUNC
+				Else
+					tcValue = This.getstring(tcValue)
+				Endif
+			Endcase
+			tcValue = Alltrim(tcValue)
+		Case tctype $ "YFIN"
+			tcValue = Strtran(Transform(tcValue), ',', '.')
+		Case tctype = "L"
+			tcValue = Iif(tcValue, "true", "false")
+		Endcase
+		Return tcValue
+	Endfunc
 
-	FUNCTION getstring AS STRING
-		LPARAMETERS tcString AS STRING, tlParseUtf8 AS Boolean
-		tcString = ALLT(tcString)
-		tcString = STRTRAN(tcString, '\', '\\' )
-		tcString = STRTRAN(tcString, CHR(9),  '\t' )
-		tcString = STRTRAN(tcString, CHR(10), '\n' )
-		tcString = STRTRAN(tcString, CHR(13), '\r' )
-		tcString = STRTRAN(tcString, '"', '\"' )
+	Function getstring As String
+		Lparameters tcString As String, tlParseUtf8 As Boolean
+		tcString = Allt(tcString)
+		tcString = Strtran(tcString, '\', '\\' )
+		tcString = Strtran(tcString, Chr(9),  '\t' )
+		tcString = Strtran(tcString, Chr(10), '\n' )
+		tcString = Strtran(tcString, Chr(13), '\r' )
+		tcString = Strtran(tcString, '"', '\"' )
 
-		IF tlParseUtf8
-			tcString = STRTRAN(tcString,"&","\u0026")
-			tcString = STRTRAN(tcString,"+","\u002b")
-			tcString = STRTRAN(tcString,"-","\u002d")
-			tcString = STRTRAN(tcString,"#","\u0023")
-			tcString = STRTRAN(tcString,"%","\u0025")
-			tcString = STRTRAN(tcString,"²","\u00b2")
-			tcString = STRTRAN(tcString,'à','\u00e0')
-			tcString = STRTRAN(tcString,'á','\u00e1')
-			tcString = STRTRAN(tcString,'è','\u00e8')
-			tcString = STRTRAN(tcString,'é','\u00e9')
-			tcString = STRTRAN(tcString,'ì','\u00ec')
-			tcString = STRTRAN(tcString,'í','\u00ed')
-			tcString = STRTRAN(tcString,'ò','\u00f2')
-			tcString = STRTRAN(tcString,'ó','\u00f3')
-			tcString = STRTRAN(tcString,'ù','\u00f9')
-			tcString = STRTRAN(tcString,'ú','\u00fa')
-			tcString = STRTRAN(tcString,'ü','\u00fc')
-			tcString = STRTRAN(tcString,'À','\u00c0')
-			tcString = STRTRAN(tcString,'Á','\u00c1')
-			tcString = STRTRAN(tcString,'È','\u00c8')
-			tcString = STRTRAN(tcString,'É','\u00c9')
-			tcString = STRTRAN(tcString,'Ì','\u00cc')
-			tcString = STRTRAN(tcString,'Í','\u00cd')
-			tcString = STRTRAN(tcString,'Ò','\u00d2')
-			tcString = STRTRAN(tcString,'Ó','\u00d3')
-			tcString = STRTRAN(tcString,'Ù','\u00d9')
-			tcString = STRTRAN(tcString,'Ú','\u00da')
-			tcString = STRTRAN(tcString,'Ü','\u00dc')
-			tcString = STRTRAN(tcString,'ñ','\u00f1')
-			tcString = STRTRAN(tcString,'Ñ','\u00d1')
-			tcString = STRTRAN(tcString,'©','\u00a9')
-			tcString = STRTRAN(tcString,'®','\u00ae')
-			tcString = STRTRAN(tcString,'ç','\u00e7')
-		ENDIF
+		If tlParseUtf8
+			tcString = Strtran(tcString,"&","\u0026")
+			tcString = Strtran(tcString,"+","\u002b")
+			tcString = Strtran(tcString,"-","\u002d")
+			tcString = Strtran(tcString,"#","\u0023")
+			tcString = Strtran(tcString,"%","\u0025")
+			tcString = Strtran(tcString,"²","\u00b2")
+			tcString = Strtran(tcString,'à','\u00e0')
+			tcString = Strtran(tcString,'á','\u00e1')
+			tcString = Strtran(tcString,'è','\u00e8')
+			tcString = Strtran(tcString,'é','\u00e9')
+			tcString = Strtran(tcString,'ì','\u00ec')
+			tcString = Strtran(tcString,'í','\u00ed')
+			tcString = Strtran(tcString,'ò','\u00f2')
+			tcString = Strtran(tcString,'ó','\u00f3')
+			tcString = Strtran(tcString,'ù','\u00f9')
+			tcString = Strtran(tcString,'ú','\u00fa')
+			tcString = Strtran(tcString,'ü','\u00fc')
+			tcString = Strtran(tcString,'À','\u00c0')
+			tcString = Strtran(tcString,'Á','\u00c1')
+			tcString = Strtran(tcString,'È','\u00c8')
+			tcString = Strtran(tcString,'É','\u00c9')
+			tcString = Strtran(tcString,'Ì','\u00cc')
+			tcString = Strtran(tcString,'Í','\u00cd')
+			tcString = Strtran(tcString,'Ò','\u00d2')
+			tcString = Strtran(tcString,'Ó','\u00d3')
+			tcString = Strtran(tcString,'Ù','\u00d9')
+			tcString = Strtran(tcString,'Ú','\u00da')
+			tcString = Strtran(tcString,'Ü','\u00dc')
+			tcString = Strtran(tcString,'ñ','\u00f1')
+			tcString = Strtran(tcString,'Ñ','\u00d1')
+			tcString = Strtran(tcString,'©','\u00a9')
+			tcString = Strtran(tcString,'®','\u00ae')
+			tcString = Strtran(tcString,'ç','\u00e7')
+		Endif
 
-		RETURN '"' +tcString + '"'
-	ENDFUNC
-ENDDEFINE
+		Return '"' +tcString + '"'
+	Endfunc
+Enddefine
 
 
-Define Class TString as custom
+Define Class TString As Custom
 	Value = ''
 	Dimension aWords[1]
-	Function init(tcStartValue)
+	Function Init(tcStartValue)
 		If Pcount() = 1
 			If Type('tcStartValue') == 'C'
-				this.Value = tcStartValue
+				This.Value = tcStartValue
 			Else
 				Error 'Invalid data type for string.'
-			EndIf
+			Endif
 		Else
-			this.Value = Space(1)
-		EndIf
-	EndFunc
-	
+			This.Value = Space(1)
+		Endif
+	Endfunc
+
 	Function Split(tcDelimiter)
 		Local tcWord, i
-		For i = 1 to GetWordCount(this.value, tcDelimiter)
-			Dimension this.aWords[i]
-			this.aWords[i] = GetWordNum(this.value, i, tcDelimiter)
-		EndFor
-		Return @this.aWords
-	EndFunc
-	
-	Function Lines
+		For i = 1 To Getwordcount(This.Value, tcDelimiter)
+			Dimension This.aWords[i]
+			This.aWords[i] = Getwordnum(This.Value, i, tcDelimiter)
+		Endfor
+		Return @This.aWords
+	Endfunc
+
+	Function LineS
 		Local tcWord, i, lcValue
-		lcValue = Strtran(this.value, Chr(10))
-		For i = 1 to GetWordCount(lcValue, Chr(13))
-			Dimension this.aWords[i]
-			this.aWords[i] = GetWordNum(lcValue, i, Chr(13))
-		EndFor
-		Return @this.aWords
-	EndFunc	
-	
-EndDefine
+		lcValue = Strtran(This.Value, Chr(10))
+		For i = 1 To Getwordcount(lcValue, Chr(13))
+			Dimension This.aWords[i]
+			This.aWords[i] = Getwordnum(lcValue, i, Chr(13))
+		Endfor
+		Return @This.aWords
+	Endfunc
+
+Enddefine
