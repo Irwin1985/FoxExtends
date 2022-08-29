@@ -113,7 +113,7 @@ Function STRTOJSON(tcJSONString)
 	Return _Screen.JSON.PARSE(tcJSONString)
 Endfunc
 
-Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10)
+Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, tvVal11)
 	Local loResult, i, loItem, lcValue, j
 
 	_vfp.foxExtendsRegEx.Pattern = "\${\d+}"
