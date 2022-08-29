@@ -38,7 +38,7 @@ FUNCTION APOP(tArray)
 	IF TYPE('tArray', 1) != 'A'
 		ERROR FUNCTION_ARG_VALUE_INVALID
 	ENDIF
-	LOCAL lnIndex
+	LOCAL lnIndex, lvOldVal
 	lnIndex = ALEN(tArray, 1)
 	lnIndex = lnIndex - 1
 	IF lnIndex <= 0
@@ -46,8 +46,10 @@ FUNCTION APOP(tArray)
 		DIMENSION tArray[lnIndex]
 		RETURN
 	ENDIF
-
+	lvOldVal = tArray[lnIndex+1]
 	DIMENSION tArray[lnIndex]
+	
+	RETURN lvOldVal
 ENDFUNC
 
 FUNCTION JOIN(tArray, tcSep)
