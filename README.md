@@ -64,7 +64,7 @@ laCountries[2] = "COLOMBIA"
 laCountries[3] = "ARGENTINA"
 laCountries[4] = "ESPAÑA"
 
-? JOIN(@laCountries, ', ') && prints USA, COLOMBIA, ARGENTINA, ESPAÑA
+? JOIN(@laCountries, ', ') // prints USA, COLOMBIA, ARGENTINA, ESPAÑA
 
 // =====================================================
 // 6. SPLIT(tcString, tcDelimiter): Creates an array with all matches found in the string provided.
@@ -82,7 +82,7 @@ ENDFOR
 // Example
 
 // Validate an email format
-? MATCHES("rodriguez.irwin@gmail.com", "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$") && print .T.
+? MATCHES("rodriguez.irwin@gmail.com", "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$") // print .T.
 
 
 // =====================================================
@@ -106,7 +106,7 @@ loMyJson = STRTOJSON('{"name": "John", "age": 36}')
 // =====================================================
 // Example
 
-? JSONTOSTR(loMyJson) && {"name": "John", "age": 36}
+? JSONTOSTR(loMyJson) // {"name": "John", "age": 36}
 
 // =====================================================
 // 11. PRINTF(tcFormat, tvVal0...tvVal10): pretty prints up to ten values (sorry for this limitation)
