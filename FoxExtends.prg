@@ -3,18 +3,18 @@
 **********************************************************************
 
 #IFNDEF FUNCTION_ARG_VALUE_INVALID
-	#Define FUNCTION_ARG_VALUE_INVALID 11
+#Define FUNCTION_ARG_VALUE_INVALID 11
 #Endif
 
 #IFNDEF JSONFOX_NOT_FOUND
-	#Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
+#Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
 #Endif
 
 If Type('_vfp.foxExtendsRegEx') != 'O'
-	=AddProperty(_vfp, 'foxExtendsRegEx', CreateObject("VBScript.RegExp"))
+	=AddProperty(_vfp, 'foxExtendsRegEx', Createobject("VBScript.RegExp"))
 	_vfp.foxExtendsRegEx.IgnoreCase = .T.
-	_vfp.foxExtendsRegEx.Global = .T.	
-EndIf
+	_vfp.foxExtendsRegEx.Global = .T.
+Endif
 
 Function PAIR(tvKey, tvValue)
 	Local loPair
@@ -58,7 +58,7 @@ Function APOP(tArray)
 	Return lvOldVal
 Endfunc
 
-Function Join(tArray, tcSep)
+Function AJOIN(tArray, tcSep)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
 	Endif
@@ -76,7 +76,7 @@ Function Join(tArray, tcSep)
 	Return lcStr
 Endfunc
 
-Function Split(tcString, tcDelimiter)
+Function ASPLIT(tcString, tcDelimiter)
 	Local loString
 	loString = Createobject("TString", tcString)
 	Return loString.Split(tcDelimiter)
