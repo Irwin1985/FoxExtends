@@ -133,7 +133,7 @@ Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6
 	Return tcFormat
 EndFunc
 
-Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, tvVal11, tvVal12)
+Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10)
 	Local laTuple, i
 	laTuple = CreateObject("TFoxExtendsInternalArray")
 	For i = 1 to Pcount()
