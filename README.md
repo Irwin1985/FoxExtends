@@ -121,7 +121,9 @@ loMyJson = STRTOJSON('{"name": "John", "age": 36}')
 ? PRINTF("Hello ${0}! My name is ${1} and I'm glad to ${2} you!", "world", "John", "meet")
 
 // ================================================================================
-// 12. ALIST(tvVal1, tvVal2, tvVal3,...tvVal10): creates an array up to ten elements
+// 12. ALIST(tvVal1, tvVal2, tvVal3,...tvVal10): creates an array up to ten 
+// heterogeneous elements.
+// 
 // NOTE: sorry for this limitation of ten arguments.
 // ================================================================================
 // Example
