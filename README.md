@@ -56,7 +56,7 @@ laCountries[4] = "ESPAÑA"
 ? APOP(@laCountries) // print ESPAÑA
 
 // ================================================================================
-// 5. JOIN(tArray, tcStep): return a string with all array elements delitemited by tcStep
+// 5. AJOIN(tArray, tcStep): return a string with all array elements delitemited by tcStep
 // ================================================================================
 // Example
 
@@ -66,14 +66,14 @@ laCountries[2] = "COLOMBIA"
 laCountries[3] = "ARGENTINA"
 laCountries[4] = "ESPAÑA"
 
-? JOIN(@laCountries, ', ') // prints USA, COLOMBIA, ARGENTINA, ESPAÑA
+? AJOIN(@laCountries, ', ') // prints USA, COLOMBIA, ARGENTINA, ESPAÑA
 
 // ================================================================================
-// 6. SPLIT(tcString, tcDelimiter): Creates an array with all matches in the string provided.
+// 6. ASPLIT(tcString, tcDelimiter): Creates an array with all matches in the string provided.
 // ================================================================================
 // Example
 
-laColors = SPLIT("Red, Yellow, Blue, Green, Purple", ',')
+laColors = ASPLIT("Red, Yellow, Blue, Green, Purple", ',')
 FOR EACH lcColor IN laColors
   ? lcColor
 ENDFOR
