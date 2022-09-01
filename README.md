@@ -119,4 +119,20 @@ loMyJson = STRTOJSON('{"name": "John", "age": 36}')
 // Example
 
 ? PRINTF("Hello ${0}! My name is ${1} and I'm glad to ${2} you!", "world", "John", "meet")
+
+// ================================================================================
+// 12. ALIST(tvVal1, tvVal2, tvVal3,...tvVal10): creates an array up to ten elements
+// NOTE: sorry for this limitation of ten arguments.
+// ================================================================================
+// Example
+
+laData = ALIST("John", 36, .T., .F., .Null., PAIR("Bank of America", "NL40RABO8933084452"), "john@gmail.com")
+FOR EACH lItem IN laData
+  ? lItem
+ENDFOR
+
+// print the pair (at index 6!!!)
+? laData[6].key // prints Bank of America
+? laData[6].value // prints NL40RABO8933084452
+
 ```
