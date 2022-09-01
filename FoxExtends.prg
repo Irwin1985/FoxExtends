@@ -131,7 +131,16 @@ Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6
 	Endfor
 
 	Return tcFormat
-Endfunc
+EndFunc
+
+Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, tvVal11, tvVal12)
+	Local laTuple, i
+	laTuple = CreateObject("TFoxExtendsInternalArray")
+	For i = 1 to Pcount()
+		laTuple.push(Evaluate("tvVal" + Alltrim(Str(i))))
+	EndFor
+	Return laTuple.GetArray()
+EndFunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -392,5 +401,24 @@ Define Class TString As Custom
 		Endfor
 		Return @This.aWords
 	Endfunc
+
+Enddefine
+
+* ============================================================ *
+* TFoxExtendsInternalArray
+* ============================================================ *
+Define Class TFoxExtendsInternalArray As Custom
+	Dimension aCustomArray[1]
+	nIndex = 0
+	
+	Function Push(tvItem)
+		this.nIndex = this.nIndex + 1
+		Dimension This.aCustomArray[this.nIndex]
+		This.aCustomArray[this.nIndex] = tvItem
+	Endfunc
+	
+	Function GetArray
+		Return @this.aCustomArray
+	EndFunc
 
 Enddefine
