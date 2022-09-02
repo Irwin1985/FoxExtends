@@ -189,7 +189,6 @@ laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those item
 // Example
 
 Use Home(2) + "\northwind\employees.dbf"
-laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
 loFields = OFIELDS('employees')
 ? ANYTOSTR(loFields) // prints a nice json format :)
 
