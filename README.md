@@ -258,14 +258,13 @@ ENDIF
 ? arithmeticOperation("+", ARGS(5, 10, 15, 20, 25, 30))
 
 FUNCTION arithmeticOperation(tcOperator, toOperands)
-	LOCAL lnResult, laParams
+  LOCAL lnResult, laParams
   lnResult = 0
+  laParams = APARAMS(toOperands) // unwrap arguments	
+  FOR EACH lnOperand IN laParams
+    lnResult = lnResult &tcOperator lnOperand
+  ENDFOR
   
-	laParams = APARAMS(toOperands) // unwrap arguments	
-	FOR EACH lnOperand IN laParams
-		lnResult = lnResult &tcOperator lnOperand
-	ENDFOR
-  
-	RETURN lnResult
+  RETURN lnResult
 ENDFUNC
 ```
