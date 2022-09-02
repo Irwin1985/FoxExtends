@@ -308,7 +308,22 @@ Function APARAMS(toArgs)
 	EndFor
 
 	Return laArgs.GetArray()	
-endfunc
+EndFunc
+
+Function STRINGLIST(toStrList)
+	Local lnCount, i, loStringList
+	lnCount = 0
+	Try
+		lnCount = Alen(toStrList.args)
+	Catch
+	EndTry
+	loStringList = CreateObject("TStringList")
+	For i = 1 to lnCount
+		loStringList.Add(toStrList.Args[i])
+	EndFor
+	
+	Return loStringList
+EndFunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
