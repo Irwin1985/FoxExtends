@@ -243,6 +243,7 @@ ENDFOR
 lcPassword = SECRETBOX("Login", "Please type your password")
 IF lcPassword != "Admin" THEN
   ? "Access Denied!"
+  RETURN
 ENDIF
 
 ? "Welcome!"
