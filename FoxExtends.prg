@@ -203,44 +203,44 @@ Function AFIELDSOBJ(tvAliasOrDataSession)
 		"table_comment", ;
 		"next_value_for_autoincrementing", ;
 		"step_for_autoincrementing")
-	
-	laData = CreateObject('TFoxExtendsInternalArray')
+
+	laData = Createobject('TFoxExtendsInternalArray')
 	For j = 1 To i
-		loFieldStruct = CreateObject('Empty')
-		For k = 1 to Alen(laProperties)
+		loFieldStruct = Createobject('Empty')
+		For k = 1 To Alen(laProperties)
 			=AddProperty(loFieldStruct, laProperties[k], laFields[j, k])
-		EndFor
+		Endfor
 		laData.Push(loFieldStruct)
 	Endfor
 
 	Return laData.GetArray()
-EndFunc
+Endfunc
 
 Function ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
 	Local i, j, k, laData, laProperties, loDirStruct
-	Do case
-	case Pcount() = 1
-		i = ADir(laDir, tcFileSkeleton)
+	Do Case
+	Case Pcount() = 1
+		i = Adir(laDir, tcFileSkeleton)
 	Case Pcount() = 2
-		i = ADir(laDir, tcFileSkeleton, tcAttribute)
+		i = Adir(laDir, tcFileSkeleton, tcAttribute)
 	Case Pcount() = 3
-		i = ADir(laDir, tcFileSkeleton, tcAttribute, tnFlags)
+		i = Adir(laDir, tcFileSkeleton, tcAttribute, tnFlags)
 	Otherwise
 		Return .Null.
-	EndCase
-		
+	Endcase
+
 	laProperties = ALIST("file_name", ;
-						"file_size", ;
-						"date_last_modified", ;
-						"time_last_modified", ;
-						"file_attributes")
-	
-	laData = CreateObject('TFoxExtendsInternalArray')
+		"file_size", ;
+		"date_last_modified", ;
+		"time_last_modified", ;
+		"file_attributes")
+
+	laData = Createobject('TFoxExtendsInternalArray')
 	For j = 1 To i
-		loDirStruct = CreateObject('Empty')
-		For k = 1 to Alen(laProperties)
+		loDirStruct = Createobject('Empty')
+		For k = 1 To Alen(laProperties)
 			=AddProperty(loDirStruct, laProperties[k], laDir[j, k])
-		EndFor
+		Endfor
 		laData.Push(loDirStruct)
 	Endfor
 
@@ -248,31 +248,67 @@ Function ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
 Endfunc
 
 Function SECRETBOX(tcPrompt, tcCaption)
-		
+
 	If Empty(Pcount())
 		Error TOO_FEW_ARGUMENTS
-	EndIf			
-		
+	Endif
+
 	Local lcPrompt, lcCaption, lcResult, loSecret
-	Store '' to lcPrompt, lcCaption
-	
-	Do case
-	case Pcount() = 1	
+	Store '' To lcPrompt, lcCaption
+
+	Do Case
+	Case Pcount() = 1
 		lcPrompt = tcPrompt
 	Case Pcount() = 2
 		lcPrompt = tcPrompt
-		lcCaption = tcCaption		
-	EndCase
+		lcCaption = tcCaption
+	Endcase
 	lcResult = ''
 
-	loSecret = CreateObject("TFoxExtendsFrmSecret", lcPrompt, lcCaption)
+	loSecret = Createobject("TFoxExtendsFrmSecret", lcPrompt, lcCaption)
 	loSecret.Show(1)
 	lcResult = loSecret.cResult
 	Release loSecret
-	
+
 	Return Alltrim(lcResult)
-	
+
+Endfunc
+
+Function ARGS(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
+		tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
+		tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
+		tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
+		tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
+		tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
+		tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
+		tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
+		tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
+		tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
+	Local loVarArg, i
+	loVarArg = Createobject('Empty')
+	=AddProperty(loVarArg, 'args[' + Alltrim(Str(Pcount())) + ']', .Null.)
+	For i = 1 To Pcount()
+		loVarArg.args[i] = Evaluate("tvPar" + Alltrim(Str(i)))
+	Endfor
+	Return loVarArg
 EndFunc
+
+Function APARAMS(toArgs)
+	Local lnNumArgs, laArgs, i
+	lnNumArgs = 0
+	Try
+		lnNumArgs = Alen(toArgs.args)
+	Catch
+		Error FUNCTION_ARG_VALUE_INVALID
+	EndTry
+
+	laArgs = Createobject("TFoxExtendsInternalArray")
+	For i = 1 To lnNumArgs
+		laArgs.Push(toArgs.args[i])
+	EndFor
+
+	Return laArgs.GetArray()	
+endfunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -797,7 +833,7 @@ Enddefine
 
 **************************************************
 * Class TFoxExtendsFrmSecret
-DEFINE CLASS TFoxExtendsFrmSecret AS form
+Define Class TFoxExtendsFrmSecret As Form
 
 	BorderStyle = 2
 	Height = 88
@@ -812,7 +848,7 @@ DEFINE CLASS TFoxExtendsFrmSecret AS form
 	Name = "FrmSecret"
 
 
-	ADD OBJECT lbl_titulo AS label WITH ;
+	Add Object lbl_titulo As Label With ;
 		FontName = "MS Sans Serif", ;
 		BackStyle = 0, ;
 		Caption = "Label1", ;
@@ -825,7 +861,7 @@ DEFINE CLASS TFoxExtendsFrmSecret AS form
 		Name = "LBL_TITULO"
 
 
-	ADD OBJECT text1 AS textbox WITH ;
+	Add Object text1 As TextBox With ;
 		FontName = "Wingdings", ;
 		ControlSource = "thisform.cResult", ;
 		Height = 23, ;
@@ -837,7 +873,7 @@ DEFINE CLASS TFoxExtendsFrmSecret AS form
 		Name = "Text1"
 
 
-	ADD OBJECT btn_ok AS commandbutton WITH ;
+	Add Object btn_ok As CommandButton With ;
 		Top = 58, ;
 		Left = 242, ;
 		Height = 23, ;
@@ -848,7 +884,7 @@ DEFINE CLASS TFoxExtendsFrmSecret AS form
 		Name = "BTN_OK"
 
 
-	ADD OBJECT btn_cancel AS commandbutton WITH ;
+	Add Object btn_cancel As CommandButton With ;
 		Top = 58, ;
 		Left = 316, ;
 		Height = 23, ;
@@ -860,36 +896,30 @@ DEFINE CLASS TFoxExtendsFrmSecret AS form
 		Name = "BTN_CANCEL"
 
 
-	PROCEDURE Init
+	Procedure Init
 		Lparameters tcPrompt, tcCaption
 
 		If Empty(tcPrompt)
 			tcPrompt = ''
-		EndIf
+		Endif
 
 		If Empty(tcCaption)
-			tcCaption = _screen.caption
-		EndIf
+			tcCaption = _Screen.Caption
+		Endif
 
-		this.Caption = tcCaption
-		this.lbl_TITULO.Caption = tcPrompt
-	ENDPROC
+		This.Caption = tcCaption
+		This.lbl_titulo.Caption = tcPrompt
+	Endproc
 
-
-*!*		PROCEDURE Unload
-*!*			Return this.cResult
-*!*		ENDPROC
-
-
-	PROCEDURE btn_ok.Click
-		thisform.hide()
-	ENDPROC
+	Procedure btn_ok.Click
+		Thisform.Hide()
+	Endproc
 
 
-	PROCEDURE btn_cancel.Click
-		thisform.cResult = ''
-		thisform.hide()
-	ENDPROC
+	Procedure btn_cancel.Click
+		Thisform.cResult = ''
+		Thisform.Hide()
+	Endproc
 
 
-ENDDEFINE
+Enddefine
