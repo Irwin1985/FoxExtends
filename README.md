@@ -247,4 +247,25 @@ ENDIF
 
 ? "Welcome!"
 
+// ================================================================================
+// 19. Variadic functions with ARGS() and APARAMS()
+// This implementation allows us to simulate variadic functions and avoid passing
+// a lot of arguments.
+// ARGS(arg1, arg2, argn): wraps all arguments inside a special object. (caller)
+// APARAMS(toArgs): unwraps all arguments into an array. (function body)
+// ================================================================================
+// Example
+? arithmeticOperation("+", ARGS(5, 10, 15, 20, 25, 30))
+
+FUNCTION arithmeticOperation(tcOperator, toOperands)
+	LOCAL lnResult, laParams
+  lnResult = 0
+  
+	laParams = APARAMS(toOperands) // unwrap arguments	
+	FOR EACH lnOperand IN laParams
+		lnResult = lnResult &tcOperator lnOperand
+	ENDFOR
+  
+	RETURN lnResult
+ENDFUNC
 ```
