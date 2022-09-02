@@ -85,7 +85,7 @@ ENDFOR
 // Example
 
 // Validate an email format
-? MATCHES("rodriguez.irwin@gmail.com", "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$") // print .T.
+? MATCH("rodriguez.irwin@gmail.com", "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$") // print .T.
 
 
 // ================================================================================
