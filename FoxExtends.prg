@@ -10,11 +10,20 @@
 #Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
 #Endif
 
+*!*	#IFNDEF DICTIONARY_ELEMENTS_NOT_MATCH
+*!*	#Define DICTIONARY_ELEMENTS_NOT_MATCH 'The keys does not match the values.'
+*!*	#Endif
+
 If Type('_vfp.foxExtendsRegEx') != 'O'
 	=AddProperty(_vfp, 'foxExtendsRegEx', Createobject("VBScript.RegExp"))
 	_vfp.foxExtendsRegEx.IgnoreCase = .T.
 	_vfp.foxExtendsRegEx.Global = .T.
 Endif
+
+If Type('_vfp.fxAnyToString') = 'U'
+	AddProperty(_vfp, 'fxAnyToString', .Null.)
+EndIf
+_vfp.fxAnyToString = CreateObject('AnyToString')
 
 Function PAIR(tvKey, tvValue)
 	Local loPair
@@ -25,9 +34,7 @@ Function PAIR(tvKey, tvValue)
 Endfunc
 
 Function ANYTOSTR(tvValue)
-	Local loAnyToStr
-	loAnyToStr = Createobject("AnyToString")
-	Return loAnyToStr.ANYTOSTR(@tvValue)
+	Return _vfp.fxAnyToString.ToString(@tvValue)
 Endfunc
 
 Function APUSH(tArray, tvItem)
@@ -141,6 +148,56 @@ Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, t
 	EndFor
 	Return laTuple.GetArray()
 EndFunc
+
+Function CLAMP(tcString, tnFrom, tnTo)
+	Return Substr(tcString, tnFrom, tnTo - tnFrom)
+EndFunc
+
+Function AMAP(tArray, tcPredicate)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	Endif
+	Local laResult, i, lcExp
+	laResult = CreateObject("TFoxExtendsInternalArray")
+	For i = 1 To Alen(tArray, 1)
+		lcExp = Strtran(tcPredicate, "$0", Transform(tArray[i]))
+		laResult.Push(Evaluate(lcExp))
+	Endfor
+	Return laResult.GetArray()
+EndFunc
+
+Function AFILTER(tArray, tcPredicate)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	Endif
+	Local laResult, i, lcExp
+	laResult = CreateObject("TFoxExtendsInternalArray")
+	For i = 1 To Alen(tArray, 1)
+		lcExp = Strtran(tcPredicate, "$0", Transform(tArray[i]))
+		If Evaluate(lcExp)
+			laResult.Push(tArray[i])
+		EndIf
+	Endfor
+	Return laResult.GetArray()
+EndFunc
+
+*!*	Function HASHMAP(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
+*!*	tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, tvPar21, tvPar22, ;
+*!*	tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30)
+*!*		If Mod(Pcount(), 2) == 1
+*!*			Error DICTIONARY_ELEMENTS_NOT_MATCH
+*!*		EndIf
+*!*		Local i, loHashMap, lcKey, lvValue
+*!*		loHashMap = CreateObject('TDictionary')
+*!*		
+*!*		For i = 1 to Pcount() step 2
+*!*			lcKey = Evaluate("tvPar" + Alltrim(Str(i)))
+*!*			lvValue = Evaluate("tvPar" + Alltrim(Str(i+1)))
+*!*			loHashMap.Add(lcKey, lvValue)
+*!*		EndFor
+*!*		
+*!*		Return loHashMap
+*!*	EndFunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -400,6 +457,245 @@ Define Class TString As Custom
 			This.aWords[i] = Getwordnum(lcValue, i, Chr(13))
 		Endfor
 		Return @This.aWords
+	Endfunc
+
+Enddefine
+
+* ============================================================ *
+* TDictionary
+* ============================================================ *
+Define Class TDictionary As TIterable
+	Hidden Items
+
+	Function Init
+		DoDefault()
+		This.Items = Createobject("Collection")
+	Endfunc
+
+	Function Add(tcKey As String, tvValue As variant)
+		If !Empty(This.Items.GetKey(tcKey))
+			This.Items.Remove(tcKey)
+		Endif
+		This.Items.Add(tvValue, tcKey)
+	Endfunc
+
+	Function Get(tcKey As String) As variant
+		Local lnIndex
+		lnIndex = This.Items.GetKey(tcKey)
+		Return Iif(Empty(lnIndex), .Null., This.Items.Item(lnIndex))
+	Endfunc
+
+	Function ContainsKey(tcKey As String) As Boolean
+		lnItem = This.Items.GetKey(tcKey)
+		Return This.Items.GetKey(tcKey) > 0
+	Endfunc
+
+	Function Clear
+		This.Items = Createobject("Collection")
+	Endfunc
+
+	Function GetDataByIndex
+		Local lvKey, lvValue
+		lvKey = This.Items.Item(This.nIteratorCounter)
+		lvValue = This.Items.GetKey(This.nIteratorCounter)
+		Return This.CreatePair(lvKey, lvValue)
+	Endfunc
+
+	Function GetLen
+		Return This.Items.Count
+	Endfunc
+
+	Hidden Function CreatePair(tvKey, tvValue)
+		Local loPair
+		loPair = Createobject('Empty')
+		AddProperty(loPair, 'key', tvKey)
+		AddProperty(loPair, 'value', tvValue)
+		Return loPair
+	EndFunc
+
+	Function ToString		
+		If this.GetLen() > 0
+			Local lcStr, i
+			lcStr = '{'
+			For i = 1 to this.GetLen()
+				If Len(lcStr) = 1 then
+					lcStr = lcStr + _vfp.fxAnyToString.ToString(this.items.getkey(i)) + ':' + this.ObjToString(this.items.item(i))
+				Else
+					lcStr = lcStr + ',' + _vfp.fxAnyToString.ToString(this.items.getkey(i)) + ':' + this.ObjToString(this.items.item(i))
+				EndIf				
+			EndFor
+			lcStr = lcStr + '}'
+			Return lcStr
+		Else
+			Return '{}'
+		EndIf
+	EndFunc
+	
+	Function ObjToString(toObj)
+		Local lcStr
+		lcStr = Space(1)
+		Try
+			lcStr = toObj.ToString()
+		Catch
+			lcStr = _vfp.fxAnyToString.ToString(toObj)
+		EndTry
+		Return lcStr
+	EndFunc
+
+Enddefine
+
+* ============================================================ *
+* TArray
+* ============================================================ *
+Define Class TArray As TIterable
+	Dimension aCustomArray[1]
+	nIndex = 0
+	
+	Function Init
+		DoDefault()
+	Endfunc
+
+	Function Push(tvItem)
+		this.nIndex = this.nIndex + 1
+		Dimension This.aCustomArray[this.nIndex]
+		This.aCustomArray[this.nIndex] = tvItem
+	Endfunc
+
+	Function Pop
+		this.nIndex = this.nIndex - 1
+		If this.nIndex <= 0
+			this.nIndex = 0
+			Dimension this.aCustomArray[1]
+			Return
+		Endif
+
+		Dimension This.aCustomArray[this.nIndex]
+	Endfunc
+
+	Function Get(tnIndex)
+		If Between(tnIndex, 1, This.GetLen())
+			Return This.aCustomArray[tnIndex]
+		Endif
+		Return .Null.
+	Endfunc
+
+	Function Set(tnIndex, tvValue)
+		If Between(tnIndex, 1, This.GetLen())
+			This.aCustomArray[tnIndex] = tvValue
+		Endif
+	Endfunc
+
+	Function GetDataByIndex
+		Return This.aCustomArray[this.nIteratorCounter]
+	Endfunc
+
+	Function GetLen
+		Return this.nIndex		
+	Endfunc
+
+	Function ToString
+		If this.nIndex > 0
+			Acopy(this.aCustomArray, laData)
+			Return _vfp.fxAnyToString.ToString(@laData)
+		Else
+			Return '[]'
+		EndIf
+	Endfunc
+
+Enddefine
+
+* ============================================================ *
+* TStringList
+* ============================================================ *
+Define Class TStringList As TIterable
+	Dimension aCustomArray[1]
+	nIndex = 0
+	
+	Function Init
+		DoDefault()
+	Endfunc
+
+	Function Add(tcItem)
+		If Type('tcItem') != 'C'
+			Return
+		EndIf
+		this.nIndex = this.nIndex + 1
+		Dimension This.aCustomArray[this.nIndex]
+		This.aCustomArray[this.nIndex] = tcItem
+	Endfunc
+
+	Function GetDataByIndex
+		Return This.aCustomArray[this.nIteratorCounter]
+	Endfunc
+
+	Function GetLen
+		Return this.nIndex
+	Endfunc
+
+	Function ToString
+		Return this.Join()
+	EndFunc
+	
+	Function Join(tcSep)
+		If this.nIndex > 0
+			Local lcStr, i, lcVal
+			lcStr = Space(1)
+			For i = 1 to this.GetLen()
+				lcVal = this.aCustomArray[i]
+				If i = 1 then
+					lcStr = lcVal
+				Else
+					lcStr = lcStr + Iif(!Empty(tcSep), tcSep + lcVal, lcVal)
+				EndIf				
+			EndFor
+			Return lcStr
+		Else
+			Return ''
+		EndIf
+	EndFunc
+
+Enddefine
+
+* ============================================================ *
+* TIterable
+* ============================================================ *
+Define Class TIterable As Custom
+	Hidden nIteratorCounter
+	Len = 0
+
+	Function Init
+		This.nIteratorCounter = 1
+	Endfunc
+
+	Function hasNext
+		If This.nIteratorCounter > This.GetLen() Then
+			This.nIteratorCounter = 0
+			Return .F.
+		Endif
+		Return .T.
+	Endfunc
+
+	Function Next
+		Local lvValue
+		lvValue = This.GetDataByIndex()
+		This.nIteratorCounter = This.nIteratorCounter + 1
+		Return lvValue
+	Endfunc
+
+	Function GetDataByIndex
+		* abstract
+	Endfunc
+
+	Function GetLen
+		* abstract
+	Endfunc
+
+	Function Len_Access
+		Return This.GetLen()
+	Endfunc
+
+	Function ToString
+
 	Endfunc
 
 Enddefine
