@@ -182,35 +182,55 @@ laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those item
 ? ANYTOSTR(@laResult) // prints [20,25,30]
 
 // ================================================================================
-// 16. OFIELDS(tcAliasOrDataSession)
-// returns an object mapped with all the table structure info.
+// 16. AFIELDSOBJ(tcAliasOrDataSession)
+// returns an array mapped with all the table structure info.
 // check AFIELDS() documentation for property names.
 // ================================================================================
 // Example
 
 Use Home(2) + "\northwind\employees.dbf"
-loFields = OFIELDS('employees')
-? ANYTOSTR(loFields) // prints a nice json format :)
+laFields = AFIELDSOBJ('employees')
+? ANYTOSTR(laFields) // prints a nice json format :)
 
 // print all properties
-? loFields.name
-? loFields.field_type
-? loFields.field_width
-? loFields.decimal_places
-? loFields.null_allowed
-? loFields.code_page_translation_not_allowed
-? loFields.field_validation_expression
-? loFields.field_validation_text
-? loFields.field_default_value
-? loFields.table_validation_expression
-? loFields.table_validation_text
-? loFields.long_table_name
-? loFields.insert_trigger_expression
-? loFields.update_trigger_expression
-? loFields.delete_trigger_expression
-? loFields.table_comment
-? loFields.next_value_for_autoincrementing
-? loFields.step_for_autoincrementing
+FOR EACH loItem IN laFields
+  ? loItem.name
+  ? loItem.field_type
+  ? loItem.field_width
+  ? loItem.decimal_places
+  ? loItem.null_allowed
+  ? loItem.code_page_translation_not_allowed
+  ? loItem.field_validation_expression
+  ? loItem.field_validation_text
+  ? loItem.field_default_value
+  ? loItem.table_validation_expression
+  ? loItem.table_validation_text
+  ? loItem.long_table_name
+  ? loItem.insert_trigger_expression
+  ? loItem.update_trigger_expression
+  ? loItem.delete_trigger_expression
+  ? loItem.table_comment
+  ? loItem.next_value_for_autoincrementing
+  ? loItem.step_for_autoincrementing
+ENDFOR
 
+// ================================================================================
+// 17. ADIROBJ(tcFileSkeleton, [tcAttribute, [tnFlags]])
+// returns an array mapped with all the files structure info.
+// check ADIR() documentation for property names.
+// ================================================================================
+// Example
+
+laDir = ADIROBJ("c:\my\path\*.txt")
+? ANYTOSTR(laDir) // prints a nice json format :)
+
+// print all properties
+FOR EACH loItem IN laDir
+  ? loItem.file_name
+  ? loItem.file_size
+  ? loItem.date_last_modified
+  ? loItem.time_last_modified
+  ? loItem.file_attributes
+ENDFOR
 
 ```
