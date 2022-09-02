@@ -180,4 +180,38 @@ laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those item
 laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
 laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
 ? ANYTOSTR(@laResult) // prints [20,25,30]
+
+// ================================================================================
+// 16. OFIELDS(tcAliasOrDataSession)
+// returns an object mapped with all the table structure info.
+// check AFIELDS() documentation for property names.
+// ================================================================================
+// Example
+
+Use Home(2) + "\northwind\employees.dbf"
+laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
+loFields = OFIELDS('employees')
+? ANYTOSTR(loFields) // prints a nice json format :)
+
+// print all properties
+? loFields.name
+? loFields.field_type
+? loFields.field_width
+? loFields.decimal_places
+? loFields.null_allowed
+? loFields.code_page_translation_not_allowed
+? loFields.field_validation_expression
+? loFields.field_validation_text
+? loFields.field_default_value
+? loFields.table_validation_expression
+? loFields.table_validation_text
+? loFields.long_table_name
+? loFields.insert_trigger_expression
+? loFields.update_trigger_expression
+? loFields.delete_trigger_expression
+? loFields.table_comment
+? loFields.next_value_for_autoincrementing
+? loFields.step_for_autoincrementing
+
+
 ```
