@@ -6,6 +6,10 @@
 #Define FUNCTION_ARG_VALUE_INVALID 11
 #Endif
 
+#IFNDEF TOO_FEW_ARGUMENTS
+#Define TOO_FEW_ARGUMENTS 1229
+#Endif
+
 #IFNDEF JSONFOX_NOT_FOUND
 #Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
 #Endif
@@ -242,6 +246,33 @@ Function ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
 
 	Return laData.GetArray()
 Endfunc
+
+Function SECRETBOX(tcPrompt, tcCaption)
+		
+	If Empty(Pcount())
+		Error TOO_FEW_ARGUMENTS
+	EndIf			
+		
+	Local lcPrompt, lcCaption, lcResult, loSecret
+	Store '' to lcPrompt, lcCaption
+	
+	Do case
+	case Pcount() = 1	
+		lcPrompt = tcPrompt
+	Case Pcount() = 2
+		lcPrompt = tcPrompt
+		lcCaption = tcCaption		
+	EndCase
+	lcResult = ''
+
+	loSecret = CreateObject("TFoxExtendsFrmSecret", lcPrompt, lcCaption)
+	loSecret.Show(1)
+	lcResult = loSecret.cResult
+	Release loSecret
+	
+	Return Alltrim(lcResult)
+	
+EndFunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -762,3 +793,103 @@ Define Class TFoxExtendsInternalArray As Custom
 	Endfunc
 
 Enddefine
+
+
+**************************************************
+* Class TFoxExtendsFrmSecret
+DEFINE CLASS TFoxExtendsFrmSecret AS form
+
+	BorderStyle = 2
+	Height = 88
+	Width = 396
+	DoCreate = .T.
+	AutoCenter = .T.
+	Caption = ""
+	MaxButton = .F.
+	MinButton = .F.
+	WindowType = 1
+	cResult = ""
+	Name = "FrmSecret"
+
+
+	ADD OBJECT lbl_titulo AS label WITH ;
+		FontName = "MS Sans Serif", ;
+		BackStyle = 0, ;
+		Caption = "Label1", ;
+		Height = 17, ;
+		Left = 8, ;
+		Top = 12, ;
+		Visible = .T., ;
+		Width = 380, ;
+		TabIndex = 1, ;
+		Name = "LBL_TITULO"
+
+
+	ADD OBJECT text1 AS textbox WITH ;
+		FontName = "Wingdings", ;
+		ControlSource = "thisform.cResult", ;
+		Height = 23, ;
+		Left = 8, ;
+		TabIndex = 2, ;
+		Top = 30, ;
+		Width = 380, ;
+		PasswordChar = "l", ;
+		Name = "Text1"
+
+
+	ADD OBJECT btn_ok AS commandbutton WITH ;
+		Top = 58, ;
+		Left = 242, ;
+		Height = 23, ;
+		Width = 72, ;
+		Caption = "OK", ;
+		Default = .T., ;
+		TabIndex = 3, ;
+		Name = "BTN_OK"
+
+
+	ADD OBJECT btn_cancel AS commandbutton WITH ;
+		Top = 58, ;
+		Left = 316, ;
+		Height = 23, ;
+		Width = 72, ;
+		Cancel = .T., ;
+		Caption = "Cancel", ;
+		Default = .F., ;
+		TabIndex = 4, ;
+		Name = "BTN_CANCEL"
+
+
+	PROCEDURE Init
+		Lparameters tcPrompt, tcCaption
+
+		If Empty(tcPrompt)
+			tcPrompt = ''
+		EndIf
+
+		If Empty(tcCaption)
+			tcCaption = _screen.caption
+		EndIf
+
+		this.Caption = tcCaption
+		this.lbl_TITULO.Caption = tcPrompt
+	ENDPROC
+
+
+*!*		PROCEDURE Unload
+*!*			Return this.cResult
+*!*		ENDPROC
+
+
+	PROCEDURE btn_ok.Click
+		thisform.hide()
+	ENDPROC
+
+
+	PROCEDURE btn_cancel.Click
+		thisform.cResult = ''
+		thisform.hide()
+	ENDPROC
+
+
+ENDDEFINE
