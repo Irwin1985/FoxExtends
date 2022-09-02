@@ -233,4 +233,18 @@ FOR EACH loItem IN laDir
   ? loItem.file_attributes
 ENDFOR
 
+// ================================================================================
+// 18. SECRETBOX(tcPrompt, [tcCaption])
+// Displays a modal dialog used for typing secret passwords.
+// NOTE: the result string is not encrypted, it's just a raw string.
+// ================================================================================
+// Example
+
+lcPassword = SECRETBOX("Login", "Please type your password")
+IF lcPassword != "Admin" THEN
+  ? "Access Denied!"
+ENDIF
+
+? "Welcome!"
+
 ```
