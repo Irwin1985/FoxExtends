@@ -10,10 +10,6 @@
 #Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
 #Endif
 
-*!*	#IFNDEF DICTIONARY_ELEMENTS_NOT_MATCH
-*!*	#Define DICTIONARY_ELEMENTS_NOT_MATCH 'The keys does not match the values.'
-*!*	#Endif
-
 If Type('_vfp.foxExtendsRegEx') != 'O'
 	=AddProperty(_vfp, 'foxExtendsRegEx', Createobject("VBScript.RegExp"))
 	_vfp.foxExtendsRegEx.IgnoreCase = .T.
@@ -22,8 +18,8 @@ Endif
 
 If Type('_vfp.fxAnyToString') = 'U'
 	AddProperty(_vfp, 'fxAnyToString', .Null.)
-EndIf
-_vfp.fxAnyToString = CreateObject('AnyToString')
+Endif
+_vfp.fxAnyToString = Createobject('AnyToString')
 
 Function PAIR(tvKey, tvValue)
 	Local loPair
@@ -138,66 +134,83 @@ Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6
 	Endfor
 
 	Return tcFormat
-EndFunc
+Endfunc
 
-Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10)
+Function ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, ;
+		tvVal11, tvVal12, tvVal13, tvVal14, tvVal15, tvVal16, tvVal17, tvVal18, tvVal19, tvVal20)
 	Local laTuple, i
-	laTuple = CreateObject("TFoxExtendsInternalArray")
-	For i = 1 to Pcount()
-		laTuple.push(Evaluate("tvVal" + Alltrim(Str(i))))
-	EndFor
+	laTuple = Createobject("TFoxExtendsInternalArray")
+	For i = 1 To Pcount()
+		laTuple.Push(Evaluate("tvVal" + Alltrim(Str(i))))
+	Endfor
 	Return laTuple.GetArray()
-EndFunc
+Endfunc
 
 Function CLAMP(tcString, tnFrom, tnTo)
 	Return Substr(tcString, tnFrom, tnTo - tnFrom)
-EndFunc
+Endfunc
 
 Function AMAP(tArray, tcPredicate)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
 	Endif
 	Local laResult, i, lcExp
-	laResult = CreateObject("TFoxExtendsInternalArray")
+	laResult = Createobject("TFoxExtendsInternalArray")
 	For i = 1 To Alen(tArray, 1)
 		lcExp = Strtran(tcPredicate, "$0", Transform(tArray[i]))
 		laResult.Push(Evaluate(lcExp))
 	Endfor
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 Function AFILTER(tArray, tcPredicate)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
 	Endif
 	Local laResult, i, lcExp
-	laResult = CreateObject("TFoxExtendsInternalArray")
+	laResult = Createobject("TFoxExtendsInternalArray")
 	For i = 1 To Alen(tArray, 1)
 		lcExp = Strtran(tcPredicate, "$0", Transform(tArray[i]))
 		If Evaluate(lcExp)
 			laResult.Push(tArray[i])
-		EndIf
+		Endif
 	Endfor
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
-*!*	Function HASHMAP(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
-*!*	tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, tvPar21, tvPar22, ;
-*!*	tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30)
-*!*		If Mod(Pcount(), 2) == 1
-*!*			Error DICTIONARY_ELEMENTS_NOT_MATCH
-*!*		EndIf
-*!*		Local i, loHashMap, lcKey, lvValue
-*!*		loHashMap = CreateObject('TDictionary')
-*!*		
-*!*		For i = 1 to Pcount() step 2
-*!*			lcKey = Evaluate("tvPar" + Alltrim(Str(i)))
-*!*			lvValue = Evaluate("tvPar" + Alltrim(Str(i+1)))
-*!*			loHashMap.Add(lcKey, lvValue)
-*!*		EndFor
-*!*		
-*!*		Return loHashMap
-*!*	EndFunc
+Function OFIELDS(tvAliasOrDataSession)
+	Local i, j, k, loFields, laFieldsNames, loFieldStruct
+	i = Afields(laFields, tvAliasOrDataSession)
+	laCaptions = ALIST("name", ;
+		"field_type", ;
+		"field_width", ;
+		"decimal_places", ;
+		"null_allowed", ;
+		"code_page_translation_not_allowed", ;
+		"field_validation_expression", ;
+		"field_validation_text", ;
+		"field_default_value", ;
+		"table_validation_expression", ;
+		"table_validation_text", ;
+		"long_table_name", ;
+		"insert_trigger_expression", ;
+		"update_trigger_expression", ;
+		"delete_trigger_expression", ;
+		"table_comment", ;
+		"next_value_for_autoincrementing", ;
+		"step_for_autoincrementing")
+	
+	loFields = CreateObject('Empty')
+	For j = 1 To i
+		loFieldStruct = CreateObject('Empty')
+		For k = 1 to Alen(laCaptions)
+			=AddProperty(loFieldStruct, laCaptions[k], laFields[j, k])
+		EndFor
+		=AddProperty(loFields, laFields[j, 1], loFieldStruct)
+	Endfor
+
+	Return loFields
+Endfunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -511,26 +524,26 @@ Define Class TDictionary As TIterable
 		AddProperty(loPair, 'key', tvKey)
 		AddProperty(loPair, 'value', tvValue)
 		Return loPair
-	EndFunc
+	Endfunc
 
-	Function ToString		
-		If this.GetLen() > 0
+	Function ToString
+		If This.GetLen() > 0
 			Local lcStr, i
 			lcStr = '{'
-			For i = 1 to this.GetLen()
-				If Len(lcStr) = 1 then
-					lcStr = lcStr + _vfp.fxAnyToString.ToString(this.items.getkey(i)) + ':' + this.ObjToString(this.items.item(i))
+			For i = 1 To This.GetLen()
+				If Len(lcStr) = 1 Then
+					lcStr = lcStr + _vfp.fxAnyToString.ToString(This.Items.GetKey(i)) + ':' + This.ObjToString(This.Items.Item(i))
 				Else
-					lcStr = lcStr + ',' + _vfp.fxAnyToString.ToString(this.items.getkey(i)) + ':' + this.ObjToString(this.items.item(i))
-				EndIf				
-			EndFor
+					lcStr = lcStr + ',' + _vfp.fxAnyToString.ToString(This.Items.GetKey(i)) + ':' + This.ObjToString(This.Items.Item(i))
+				Endif
+			Endfor
 			lcStr = lcStr + '}'
 			Return lcStr
 		Else
 			Return '{}'
-		EndIf
-	EndFunc
-	
+		Endif
+	Endfunc
+
 	Function ObjToString(toObj)
 		Local lcStr
 		lcStr = Space(1)
@@ -538,34 +551,34 @@ Define Class TDictionary As TIterable
 			lcStr = toObj.ToString()
 		Catch
 			lcStr = _vfp.fxAnyToString.ToString(toObj)
-		EndTry
+		Endtry
 		Return lcStr
-	EndFunc
+	Endfunc
 
 Enddefine
 
 * ============================================================ *
 * TArray
 * ============================================================ *
-Define Class TArray As TIterable
+Define Class tArray As TIterable
 	Dimension aCustomArray[1]
 	nIndex = 0
-	
+
 	Function Init
 		DoDefault()
 	Endfunc
 
 	Function Push(tvItem)
-		this.nIndex = this.nIndex + 1
+		This.nIndex = This.nIndex + 1
 		Dimension This.aCustomArray[this.nIndex]
 		This.aCustomArray[this.nIndex] = tvItem
 	Endfunc
 
 	Function Pop
-		this.nIndex = this.nIndex - 1
-		If this.nIndex <= 0
-			this.nIndex = 0
-			Dimension this.aCustomArray[1]
+		This.nIndex = This.nIndex - 1
+		If This.nIndex <= 0
+			This.nIndex = 0
+			Dimension This.aCustomArray[1]
 			Return
 		Endif
 
@@ -590,16 +603,16 @@ Define Class TArray As TIterable
 	Endfunc
 
 	Function GetLen
-		Return this.nIndex		
+		Return This.nIndex
 	Endfunc
 
 	Function ToString
-		If this.nIndex > 0
-			Acopy(this.aCustomArray, laData)
+		If This.nIndex > 0
+			Acopy(This.aCustomArray, laData)
 			Return _vfp.fxAnyToString.ToString(@laData)
 		Else
 			Return '[]'
-		EndIf
+		Endif
 	Endfunc
 
 Enddefine
@@ -610,7 +623,7 @@ Enddefine
 Define Class TStringList As TIterable
 	Dimension aCustomArray[1]
 	nIndex = 0
-	
+
 	Function Init
 		DoDefault()
 	Endfunc
@@ -618,8 +631,8 @@ Define Class TStringList As TIterable
 	Function Add(tcItem)
 		If Type('tcItem') != 'C'
 			Return
-		EndIf
-		this.nIndex = this.nIndex + 1
+		Endif
+		This.nIndex = This.nIndex + 1
 		Dimension This.aCustomArray[this.nIndex]
 		This.aCustomArray[this.nIndex] = tcItem
 	Endfunc
@@ -629,30 +642,30 @@ Define Class TStringList As TIterable
 	Endfunc
 
 	Function GetLen
-		Return this.nIndex
+		Return This.nIndex
 	Endfunc
 
 	Function ToString
-		Return this.Join()
-	EndFunc
-	
+		Return This.Join()
+	Endfunc
+
 	Function Join(tcSep)
-		If this.nIndex > 0
+		If This.nIndex > 0
 			Local lcStr, i, lcVal
 			lcStr = Space(1)
-			For i = 1 to this.GetLen()
-				lcVal = this.aCustomArray[i]
-				If i = 1 then
+			For i = 1 To This.GetLen()
+				lcVal = This.aCustomArray[i]
+				If i = 1 Then
 					lcStr = lcVal
 				Else
 					lcStr = lcStr + Iif(!Empty(tcSep), tcSep + lcVal, lcVal)
-				EndIf				
-			EndFor
+				Endif
+			Endfor
 			Return lcStr
 		Else
 			Return ''
-		EndIf
-	EndFunc
+		Endif
+	Endfunc
 
 Enddefine
 
@@ -706,15 +719,15 @@ Enddefine
 Define Class TFoxExtendsInternalArray As Custom
 	Dimension aCustomArray[1]
 	nIndex = 0
-	
+
 	Function Push(tvItem)
-		this.nIndex = this.nIndex + 1
+		This.nIndex = This.nIndex + 1
 		Dimension This.aCustomArray[this.nIndex]
 		This.aCustomArray[this.nIndex] = tvItem
 	Endfunc
-	
+
 	Function GetArray
-		Return @this.aCustomArray
-	EndFunc
+		Return @This.aCustomArray
+	Endfunc
 
 Enddefine
