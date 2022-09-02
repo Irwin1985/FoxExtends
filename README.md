@@ -137,4 +137,47 @@ ENDFOR
 ? laData[6].key // prints Bank of America
 ? laData[6].value // prints NL40RABO8933084452
 
+// ================================================================================
+// 13. CLAMP(tcString, tnFrom, tnTo): captures a range of characters. 
+// ================================================================================
+// Example
+
+lcString = "This is a string"
+? CLAMP(lcString, 6, 10) // prints "is a"
+
+// ================================================================================
+// 14. AMAP(tArray, tcPredicate): returns an array with tcPredicate expression
+// applied.
+//
+// LIMITATIONS: the array must be one-dimensional and homogeneous.
+// ================================================================================
+// Example
+
+laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
+laResult = AMAP(@laNumbers, "$0 + 5")
+? ANYTOSTR(@laResult) // prints [10,15,20,25,30,35,40,45]
+
+// ================================================================================
+// 15. AFILTER(tArray, tcPredicate): returns all items from tArray that returns .T.
+// by applying the tcPredicate expression.
+//
+// LIMITATIONS: the array must be one-dimensional and homogeneous.
+// ================================================================================
+// Example
+
+laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
+laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
+? ANYTOSTR(@laResult) // prints [20,25,30]
+
+// ================================================================================
+// 15. AFILTER(tArray, tcPredicate): returns all items from tArray that returns .T.
+// by applying the tcPredicate expression.
+//
+// LIMITATIONS: the array must be one-dimensional and homogeneous.
+// ================================================================================
+// Example
+
+laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
+laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
+? ANYTOSTR(@laResult) // prints [20,25,30]
 ```
