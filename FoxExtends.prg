@@ -178,10 +178,10 @@ Function AFILTER(tArray, tcPredicate)
 	Return laResult.GetArray()
 Endfunc
 
-Function OFIELDS(tvAliasOrDataSession)
-	Local i, j, k, loFields, laFieldsNames, loFieldStruct
+Function AFIELDSOBJ(tvAliasOrDataSession)
+	Local i, j, k, laData, laProperties, loFieldStruct
 	i = Afields(laFields, tvAliasOrDataSession)
-	laCaptions = ALIST("name", ;
+	laProperties = ALIST("name", ;
 		"field_type", ;
 		"field_width", ;
 		"decimal_places", ;
@@ -200,16 +200,47 @@ Function OFIELDS(tvAliasOrDataSession)
 		"next_value_for_autoincrementing", ;
 		"step_for_autoincrementing")
 	
-	loFields = CreateObject('Empty')
+	laData = CreateObject('TFoxExtendsInternalArray')
 	For j = 1 To i
 		loFieldStruct = CreateObject('Empty')
-		For k = 1 to Alen(laCaptions)
-			=AddProperty(loFieldStruct, laCaptions[k], laFields[j, k])
+		For k = 1 to Alen(laProperties)
+			=AddProperty(loFieldStruct, laProperties[k], laFields[j, k])
 		EndFor
-		=AddProperty(loFields, laFields[j, 1], loFieldStruct)
+		laData.Push(loFieldStruct)
 	Endfor
 
-	Return loFields
+	Return laData.GetArray()
+EndFunc
+
+Function ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
+	Local i, j, k, laData, laProperties, loDirStruct
+	Do case
+	case Pcount() = 1
+		i = ADir(laDir, tcFileSkeleton)
+	Case Pcount() = 2
+		i = ADir(laDir, tcFileSkeleton, tcAttribute)
+	Case Pcount() = 3
+		i = ADir(laDir, tcFileSkeleton, tcAttribute, tnFlags)
+	Otherwise
+		Return .Null.
+	EndCase
+		
+	laProperties = ALIST("file_name", ;
+						"file_size", ;
+						"date_last_modified", ;
+						"time_last_modified", ;
+						"file_attributes")
+	
+	laData = CreateObject('TFoxExtendsInternalArray')
+	For j = 1 To i
+		loDirStruct = CreateObject('Empty')
+		For k = 1 to Alen(laProperties)
+			=AddProperty(loDirStruct, laProperties[k], laDir[j, k])
+		EndFor
+		laData.Push(loDirStruct)
+	Endfor
+
+	Return laData.GetArray()
 Endfunc
 
 * ========================================================================================== *
