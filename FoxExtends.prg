@@ -14,6 +14,15 @@
 #Define JSONFOX_NOT_FOUND 'JSONFOX.APP does not exist in your PATH() directories. Please make sure JSONFOX.APP can be found by your application.'
 #Endif
 
+#IFNDEF HASHTABLE_PARAMS_MISTMATCH
+#Define HASHTABLE_PARAMS_MISTMATCH 'keys does not match values'
+#Endif
+
+#IFNDEF HASHTABLE_INVALID_KEY
+#Define HASHTABLE_INVALID_KEY 'Invalid key'
+#Endif
+
+
 If Type('_vfp.foxExtendsRegEx') != 'O'
 	=AddProperty(_vfp, 'foxExtendsRegEx', Createobject("VBScript.RegExp"))
 	_vfp.foxExtendsRegEx.IgnoreCase = .T.
@@ -347,6 +356,30 @@ Function AZIP(tArray1, tArray2)
 	EndFor	
 
 	Return laResult.GetArray()	
+EndFunc
+
+Function HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
+		tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
+		tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
+		tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
+		tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
+		tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
+		tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
+		tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
+		tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
+		tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
+	If Mod(Pcount(), 2) = 1
+		Error HASHTABLE_PARAMS_MISTMATCH
+	EndIf
+	Local i, loDict
+	loDict = CreateObject('Empty')
+	For i = 1 to Pcount() step 2
+		If Type("tvPar" + Alltrim(Str(i))) != 'C'
+			Error HASHTABLE_INVALID_KEY
+		EndIf
+		=AddProperty(loDict, Evaluate("tvPar" + Alltrim(Str(i))), Evaluate("tvPar" + Alltrim(Str(i+1))))
+	EndFor
+	Return loDict
 EndFunc
 
 * ========================================================================================== *
