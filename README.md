@@ -306,4 +306,20 @@ FOR EACH loItem IN laFusion
   ? loItem.right
 ENDFOR
 
+// ================================================================================
+// 22. HASHTABLE(tcKey2, tcValue1 [,...]): creates a dictionary with the given
+// keys and values.
+// LIMITATION:
+// 1. keys must be strings
+// 2. the function takes up to 50 key-values params.
+// ================================================================================
+// Example
+
+loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
+
+? loDictionary.name
+? loDictionary.age
+? loDictionary.gender
+? loDictionary.salary
+
 ```
