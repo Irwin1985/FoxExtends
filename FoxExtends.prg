@@ -325,6 +325,30 @@ Function STRINGLIST(toStrList)
 	Return loStringList
 EndFunc
 
+Function AZIP(tArray1, tArray2)
+	If Type('tArray1', 1) != 'A' or Type('tArray2', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	EndIf
+	Local lnLenArray1, lnLenArray2, i, lnCount, laResult, loPair
+	lnLenArray1 = Alen(tArray1, 1)
+	lnLenArray2 = Alen(tArray2, 1)
+	If lnLenArray1 < lnLenArray2
+		lnCount = lnLenArray1
+	Else
+		lnCount = lnLenArray2
+	EndIf
+	laResult = Createobject("TFoxExtendsInternalArray")
+	
+	For i = 1 to lnCount
+		loPair = CreateObject('Empty')
+		=AddProperty(loPair, 'left', tArray1[i])
+		=AddProperty(loPair, 'right', tArray2[i])
+		laResult.Push(loPair)
+	EndFor	
+
+	Return laResult.GetArray()	
+EndFunc
+
 * ========================================================================================== *
 * HELPER FUNCTIONS
 * ========================================================================================== *
@@ -835,6 +859,7 @@ Define Class TFoxExtendsInternalArray As Custom
 
 	Function Push(tvItem)
 		This.nIndex = This.nIndex + 1
+		
 		Dimension This.aCustomArray[this.nIndex]
 		This.aCustomArray[this.nIndex] = tvItem
 	Endfunc
