@@ -289,4 +289,21 @@ laStuffs.Add("Table")
 
 ? laStuffs.Join(', ')
 
+// ================================================================================
+// 21. AZIP(tArray1, tArray2): returns a new array with the combination of two
+// arrays provided. Each element must be accessed by using the 'left' and 'right'
+// properties.
+// ================================================================================
+// Example
+
+laFruits = ALIST("Apples", "Bananas", "Strawberry")
+laVegetables = ALIST("Tomato", "Carrot", "Pumpkins")
+
+laFusion = AZIP(@laFruits, @laVegetables)
+
+FOR EACH loItem IN laFusion
+  ? loItem.left
+  ? loItem.right
+ENDFOR
+
 ```
