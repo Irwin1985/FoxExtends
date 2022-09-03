@@ -243,6 +243,7 @@ ENDFOR
 lcPassword = SECRETBOX("Login", "Please type your password")
 IF lcPassword != "Admin" THEN
   ? "Access Denied!"
+  RETURN
 ENDIF
 
 ? "Welcome!"
@@ -267,4 +268,42 @@ FUNCTION arithmeticOperation(tcOperator, toOperands)
   
   RETURN lnResult
 ENDFUNC
+
+// ================================================================================
+// 20. STRINGLIST(): creates an string object that enhance the string manipulation
+// NOTE: it's constructor accepts ARGS() parameters. See ARGS() and APARAMS()
+// ================================================================================
+// Example
+laLanguages = STRINGLIST() // empty stringlist
+laLanguages.Add("Visual FoxPro")
+laLanguages.Add("Swift")
+laLanguages.Add("Nim")
+laLanguages.Add("V")
+? laLanguages.Join(', ') // print "Visual FoxPro, Swift, Nim, V"
+
+// Example 2: using the constructor.
+laStuffs = STRINGLIST(ARGS("House", "Horse", "Pencil"))
+laStuffs.Add("Red")
+laStuffs.Add("Person")
+laStuffs.Add("Table")
+
+? laStuffs.Join(', ')
+
+// ================================================================================
+// 21. AZIP(tArray1, tArray2): returns a new array with the combination of two
+// arrays provided. Each element must be accessed by using the 'left' and 'right'
+// properties.
+// ================================================================================
+// Example
+
+laFruits = ALIST("Apples", "Bananas", "Strawberry")
+laVegetables = ALIST("Tomato", "Carrot", "Pumpkins")
+
+laFusion = AZIP(@laFruits, @laVegetables)
+
+FOR EACH loItem IN laFusion
+  ? loItem.left
+  ? loItem.right
+ENDFOR
+
 ```
