@@ -145,7 +145,23 @@ Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6
 		lcValue = Evaluate("tvVal" + j)
 		tcFormat = Strtran(tcFormat, loItem.Value, Transform(lcValue))
 	Endfor
-
+	* Convert escaping charcters
+	If At('\t', tcFormat) > 0
+		tcFormat = Strtran(tcFormat, '\t', Chr(9))
+	EndIf
+	If At('\r', tcFormat) > 0
+		tcFormat = Strtran(tcFormat, '\r', Chr(13))
+	EndIf
+	If At('\n', tcFormat) > 0
+		tcFormat = Strtran(tcFormat, '\n', Chr(10))
+	EndIf
+	If At('\"', tcFormat) > 0
+		tcFormat = Strtran(tcFormat, '\"', '"')
+	EndIf
+	If At("\'", tcFormat) > 0
+		tcFormat = Strtran(tcFormat, "\'", "'")
+	EndIf
+	
 	Return tcFormat
 Endfunc
 
