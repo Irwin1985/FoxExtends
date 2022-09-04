@@ -101,7 +101,25 @@ Endfunc
 Function MATCH(tcString, tcPattern)
 	_vfp.foxExtendsRegEx.Pattern = tcPattern
 	Return _vfp.foxExtendsRegEx.test(tcString)
-Endfunc
+EndFunc
+
+Function AMATCH(tcString, tcPattern, tnOccurrences)
+	Local loResult, laItems, i
+	_vfp.foxExtendsRegEx.pattern = tcPattern
+	loResult = _vfp.foxExtendsRegEx.Execute(tcString)
+	If Type('loResult') != 'O'
+		Return .Null.
+	EndIf
+	
+	If Empty(tnOccurrences) or !Between(tnOccurrences, 1, loResult.count)
+		tnOccurrences = loResult.count
+	EndIf
+
+	laItems = Createobject("TFoxExtendsInternalArray")
+	laItems.Push(loResult.Item[tnOccurrences-1].Value)
+
+	Return laItems.GetArray()
+EndFunc
 
 Function REVERSE(tcString)
 	Local lcValue, i
@@ -472,22 +490,26 @@ Function ASLICE(tArray, tcRange)
 	Return laSlice.GetArray()
 EndFunc
 
-Function AMATCH(tcString, tcPattern, tnOccurrences)
-	Local loResult, laItems, i
-	_vfp.foxExtendsRegEx.pattern = tcPattern
-	loResult = _vfp.foxExtendsRegEx.Execute(tcString)
-	If Type('loResult') != 'O'
-		Return .Null.
-	EndIf
-	
-	If Empty(tnOccurrences) or !Between(tnOccurrences, 1, loResult.count)
-		tnOccurrences = loResult.count
+Function AINTERSECT(tArray1, tArray2)
+	If Type('tArray1', 1) != 'A' or Type('tArray2', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
 	EndIf
 
-	laItems = Createobject("TFoxExtendsInternalArray")
-	laItems.Push(loResult.Item[tnOccurrences-1].Value)
+	Local laResult, i, j
+	laResult = Createobject("TFoxExtendsInternalArray")
 
-	Return laItems.GetArray()
+	For i = 1 to Alen(tArray1, 1)
+		For j = 1 to Alen(tArray2, 1)
+			try
+				If tArray1[i] == tArray2[j]
+					laResult.Push(tArray1[i])
+				EndIf
+			Catch && silence posible types incompatibility exception
+			endtry
+		EndFor
+	EndFor
+
+	Return laResult.GetArray()
 EndFunc
 
 * ========================================================================================== *
