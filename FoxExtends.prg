@@ -495,18 +495,15 @@ Function AINTERSECT(tArray1, tArray2)
 		Error FUNCTION_ARG_VALUE_INVALID
 	EndIf
 
-	Local laResult, i, j
+	Local laResult, i, j, k
 	laResult = Createobject("TFoxExtendsInternalArray")
 
 	For i = 1 to Alen(tArray1, 1)
-		For j = 1 to Alen(tArray2, 1)
-			try
-				If tArray1[i] == tArray2[j]
-					laResult.Push(tArray1[i])
-				EndIf
-			Catch && silence posible types incompatibility exception
-			endtry
-		EndFor
+		k = Ascan(tArray2, tArray1[i])
+		If k > 0
+			laResult.Push(tArray1[i])
+			k = 0
+		EndIf
 	EndFor
 
 	Return laResult.GetArray()
