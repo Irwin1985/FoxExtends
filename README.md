@@ -374,4 +374,23 @@ laResult = AMATCH(lcString, "\w+", 1) // first number
 laResult = AMATCH(lcString, "\w+", 2) // second number
 ? laResult[1] // 100
 
+// ================================================================================
+// 27. AINSERSECT(tArray1, tArray2): creates an array with all elements in tArray1
+// that are present in tArray2.
+// ================================================================================
+// Example
+
+laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
+laSalad = ALIST("tomato", "grape", "onion", "pumpkin", "lemon")
+
+laCommons = AINTERSECT(@laFruits, @laSalad)
+? ANYTOSTR(@laCommons) // ["grape", "lemon"]
+
+// Example # 2: compare heterogeneous arrays
+laJustNumbers = ALIST(5, 10, 15, 20, 25, 30)
+laNumbersAndLetters = ALIST("five", "ten", 15, 30, 100)
+
+laCommons = AINTERSECT(@laJustNumbers, @laNumbersAndLetters)
+? ANYTOSTR(@laCommons) // [15, 30]
+
 ```
