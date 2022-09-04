@@ -323,4 +323,55 @@ loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 300
 ? loDictionary.gender
 ? loDictionary.salary
 
+// ================================================================================
+// 23. HASKEY(toDictionary, tcKey): determines if tcKey exists in toDictionary
+// ================================================================================
+// Example
+
+loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
+? HASKEY(loDictionary, "name") // .T.
+? HASKEY(loDictionary, "address") // .F.
+
+// ================================================================================
+// 24. AKEYS(toDictionary): returns an array with all keys found in toDictionary
+// ================================================================================
+// Example
+loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
+laKeys = AKEYS(loDictionary)
+?ANYTOSTR(@laKeys) // ["NAME", "AGE", "GENDER", "SALARY"]
+
+// ================================================================================
+// 25. ASLICE(tArray, tcRange): creates an array with the range provided.
+// ================================================================================
+// Example
+
+laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
+laSlice = ASLICE(@laFruits, "2..3") // from index 2 until index 3
+? ANYTOSTR(@laSlice) // ["banana", "blackberry"]
+
+laSlice = ASLICE(@laFruits, "..3") // from index 1 up to 3
+? ANYTOSTR(@laSlice) // ["apple", "banana", "blackberry"]
+
+laSlice = ASLICE(@laFruits, "5..") // from index 5 up to the end of the array.
+? ANYTOSTR(@laSlice) // ["lemon", "mango", "raspberry"]
+
+laSlice = ASLICE(@laFruits, "3") // first 3 elements
+? ANYTOSTR(@laSlice) // ["apple", "banana", "blackberry"]
+
+laSlice = ASLICE(@laFruits, "-2") // last 2 elements
+? ANYTOSTR(@laSlice) // ["mango", "raspberry"]
+
+// ================================================================================
+// 26. AMATCH(tcString, tcPattern, tcOccurrences): creates an array with the
+// ocurrences found in tcString by applying the tcPattern regular expression.
+// ================================================================================
+// Example
+
+lcString = "Hi, foxextends has more than 20 functions...! can you help me to make it 100?"
+laResult = AMATCH(lcString, "\w+", 1) // first number
+? laResult[1] // 20
+
+laResult = AMATCH(lcString, "\w+", 2) // second number
+? laResult[1] // 100
+
 ```
