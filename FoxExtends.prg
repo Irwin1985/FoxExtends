@@ -398,6 +398,98 @@ Function HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar
 	Return loDict
 EndFunc
 
+
+Function HASKEY(toDict, tcKey)
+	Local lbResult
+	Try
+		lbResult = Type('toDict.' + tcKey) != 'U'
+	Catch
+		lbResult = .f.
+	EndTry
+	
+	Return lbResult
+EndFunc
+
+
+Function AKEYS(toDict)
+	Local i, laResult, lnCount
+	lnCount = AMembers(laKeys, toDict, 0, "PHGNUCIBR")
+	If lnCount > 0
+		laResult = Createobject("TFoxExtendsInternalArray")
+		For i = 1 to lnCount
+			laResult.Push(laKeys[i])
+		EndFor
+		Return laResult.GetArray()
+	Else
+		Return .Null.
+	endif
+EndFunc
+
+Function ASLICE(tArray, tcRange)
+	If Type('tArray', 1) != 'A'
+		Error FUNCTION_ARG_VALUE_INVALID
+	EndIf
+	Local laSlice, lnFirst, lnLast, lnLen, i
+	laSlice = Createobject("TFoxExtendsInternalArray")
+	lnLen = Alen(tArray, 1)
+	Do case
+	case MATCH(tcRange, '^\w+\.\.\w+$') && DIGIT .. DIGIT
+		lnFirst = AMATCH(tcRange, '\w+', 1)
+		lnFirst = Val(lnFirst[1])
+		lnLast = AMATCH(tcRange, '\w+', 2)
+		lnLast = Val(lnLast[1])
+
+	case MATCH(tcRange, '^\.\.\w+$')	&& .. DIGIT
+		lnFirst = 1
+		lnLast = AMATCH(tcRange, '\w+', 2)
+		lnLast = Val(lnLast[1])
+
+	case MATCH(tcRange, '^\w+\.\.$')	&& DIGIT ..
+		lnFirst = AMATCH(tcRange, '\w+', 1)
+		lnFirst = Val(lnFirst[1])
+		lnLast = lnLen
+
+	case MATCH(tcRange, '^\w+$')	&& +DIGIT
+		lnFirst = 1
+		lnLast = Val(tcRange)
+	case MATCH(tcRange, '^\-\w+$')	&& -DIGIT		
+		lnFirst = lnLen - Abs(Val(tcRange))	+ 1	
+		lnLast = lnLen
+	Otherwise
+		lnFirst = 1
+		lnLast = lnLen
+	EndCase
+	* Check out of bounds
+	If !Between(lnFirst, 1, lnLen) or !Between(lnLast, 1, lnLen)
+		Return .Null.
+	EndIf
+
+	* Extract elements
+	For i = lnFirst to lnLast
+		laSlice.Push(tArray[i])
+	EndFor
+	
+	Return laSlice.GetArray()
+EndFunc
+
+Function AMATCH(tcString, tcPattern, tnOccurrences)
+	Local loResult, laItems, i
+	_vfp.foxExtendsRegEx.pattern = tcPattern
+	loResult = _vfp.foxExtendsRegEx.Execute(tcString)
+	If Type('loResult') != 'O'
+		Return .Null.
+	EndIf
+	
+	If Empty(tnOccurrences) or !Between(tnOccurrences, 1, loResult.count)
+		tnOccurrences = loResult.count
+	EndIf
+
+	laItems = Createobject("TFoxExtendsInternalArray")
+	laItems.Push(loResult.Item[tnOccurrences-1].Value)
+
+	Return laItems.GetArray()
+EndFunc
+
 * ========================================================================================== *
 * HELPER FUNCTIONS
 * ========================================================================================== *
