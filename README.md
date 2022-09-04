@@ -114,6 +114,7 @@ loMyJson = STRTOJSON('{"name": "John", "age": 36}')
 
 // ================================================================================
 // 11. PRINTF(tcFormat, tvVal0...tvVal10): pretty prints up to ten values.
+// you can even escape some special characters like: \t, \r, \n, \", \'
 // NOTE: sorry for this limitation of ten arguments.
 // ================================================================================
 // Example
