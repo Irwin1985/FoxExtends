@@ -393,4 +393,19 @@ laNumbersAndLetters = ALIST("five", "ten", 15, 30, 100)
 laCommons = AINTERSECT(@laJustNumbers, @laNumbersAndLetters)
 ? ANYTOSTR(@laCommons) // [15, 30]
 
+// ================================================================================
+// 28. ADDKEY(toDict, tcKey, tvValue): adds a key to toDict.
+// NOTE: toDict should be created with HASTABLE(...)
+// ================================================================================
+// Example
+loPrices = HASHTABLE('apples', 1.45)
+=ADDKEY(loPrices, 'oranges', 0.75)
+
+// ================================================================================
+// 29. REMOVEKEY(toDict, tcKey): removes a key from toDict.
+// NOTE: toDict should be created with HASTABLE(...)
+// ================================================================================
+// Example
+loPrices = HASHTABLE('apples', 1.45, 'oranges', 0.75, 'tomatoes', 1.40, 'onions', 0.54, 'book', 1.40)
+=REMOVEKEY(loPrices, 'book') // book should not be in this list of prices.
 ```
