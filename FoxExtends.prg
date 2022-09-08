@@ -101,25 +101,27 @@ Endfunc
 Function MATCH(tcString, tcPattern)
 	_vfp.foxExtendsRegEx.Pattern = tcPattern
 	Return _vfp.foxExtendsRegEx.test(tcString)
-EndFunc
+Endfunc
 
 Function AMATCH(tcString, tcPattern, tnOccurrences)
 	Local loResult, laItems, i
-	_vfp.foxExtendsRegEx.pattern = tcPattern
+	_vfp.foxExtendsRegEx.Pattern = tcPattern
 	loResult = _vfp.foxExtendsRegEx.Execute(tcString)
 	If Type('loResult') != 'O'
-		Return .Null.
-	EndIf
-	
-	If Empty(tnOccurrences) or !Between(tnOccurrences, 1, loResult.count)
-		tnOccurrences = loResult.count
-	EndIf
+		Return ""
+	Endif
 
+	If Empty(tnOccurrences) Or !Between(tnOccurrences, 1, loResult.Count)
+		tnOccurrences = loResult.Count
+	Endif
+	If Type('loResult.Item[tnOccurrences-1]') != 'O'
+		Return ""
+	Endif
 	laItems = Createobject("TFoxExtendsInternalArray")
 	laItems.Push(loResult.Item[tnOccurrences-1].Value)
 
 	Return laItems.GetArray()
-EndFunc
+Endfunc
 
 Function REVERSE(tcString)
 	Local lcValue, i
@@ -166,20 +168,20 @@ Function PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6
 	* Convert escaping charcters
 	If At('\t', tcFormat) > 0
 		tcFormat = Strtran(tcFormat, '\t', Chr(9))
-	EndIf
+	Endif
 	If At('\r', tcFormat) > 0
 		tcFormat = Strtran(tcFormat, '\r', Chr(13))
-	EndIf
+	Endif
 	If At('\n', tcFormat) > 0
 		tcFormat = Strtran(tcFormat, '\n', Chr(10))
-	EndIf
+	Endif
 	If At('\"', tcFormat) > 0
 		tcFormat = Strtran(tcFormat, '\"', '"')
-	EndIf
+	Endif
 	If At("\'", tcFormat) > 0
 		tcFormat = Strtran(tcFormat, "\'", "'")
-	EndIf
-	
+	Endif
+
 	Return tcFormat
 Endfunc
 
@@ -331,47 +333,47 @@ Function ARGS(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tv
 	loVarArg = Createobject('Empty')
 	=AddProperty(loVarArg, 'args[' + Alltrim(Str(Pcount())) + ']', .Null.)
 	For i = 1 To Pcount()
-		loVarArg.args[i] = Evaluate("tvPar" + Alltrim(Str(i)))
+		loVarArg.ARGS[i] = Evaluate("tvPar" + Alltrim(Str(i)))
 	Endfor
 	Return loVarArg
-EndFunc
+Endfunc
 
 Function APARAMS(toArgs)
 	Local lnNumArgs, laArgs, i
 	lnNumArgs = 0
 	Try
-		lnNumArgs = Alen(toArgs.args)
+		lnNumArgs = Alen(toArgs.ARGS)
 	Catch
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndTry
+	Endtry
 
 	laArgs = Createobject("TFoxExtendsInternalArray")
 	For i = 1 To lnNumArgs
-		laArgs.Push(toArgs.args[i])
-	EndFor
+		laArgs.Push(toArgs.ARGS[i])
+	Endfor
 
-	Return laArgs.GetArray()	
-EndFunc
+	Return laArgs.GetArray()
+Endfunc
 
 Function STRINGLIST(toStrList)
 	Local lnCount, i, loStringList
 	lnCount = 0
 	Try
-		lnCount = Alen(toStrList.args)
+		lnCount = Alen(toStrList.ARGS)
 	Catch
-	EndTry
-	loStringList = CreateObject("TStringList")
-	For i = 1 to lnCount
-		loStringList.Add(toStrList.Args[i])
-	EndFor
-	
+	Endtry
+	loStringList = Createobject("TStringList")
+	For i = 1 To lnCount
+		loStringList.Add(toStrList.ARGS[i])
+	Endfor
+
 	Return loStringList
-EndFunc
+Endfunc
 
 Function AZIP(tArray1, tArray2)
-	If Type('tArray1', 1) != 'A' or Type('tArray2', 1) != 'A'
+	If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 	Local lnLenArray1, lnLenArray2, i, lnCount, laResult, loPair
 	lnLenArray1 = Alen(tArray1, 1)
 	lnLenArray2 = Alen(tArray2, 1)
@@ -379,18 +381,18 @@ Function AZIP(tArray1, tArray2)
 		lnCount = lnLenArray1
 	Else
 		lnCount = lnLenArray2
-	EndIf
+	Endif
 	laResult = Createobject("TFoxExtendsInternalArray")
-	
-	For i = 1 to lnCount
-		loPair = CreateObject('Empty')
+
+	For i = 1 To lnCount
+		loPair = Createobject('Empty')
 		=AddProperty(loPair, 'left', tArray1[i])
 		=AddProperty(loPair, 'right', tArray2[i])
 		laResult.Push(loPair)
-	EndFor	
+	Endfor
 
-	Return laResult.GetArray()	
-EndFunc
+	Return laResult.GetArray()
+Endfunc
 
 Function HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
 		tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
@@ -404,17 +406,17 @@ Function HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar
 		tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
 	If Mod(Pcount(), 2) = 1
 		Error HASHTABLE_PARAMS_MISTMATCH
-	EndIf
+	Endif
 	Local i, loDict
-	loDict = CreateObject('Empty')
-	For i = 1 to Pcount() step 2
+	loDict = Createobject('Empty')
+	For i = 1 To Pcount() Step 2
 		If Type("tvPar" + Alltrim(Str(i))) != 'C'
 			Error HASHTABLE_INVALID_KEY
-		EndIf
+		Endif
 		=AddProperty(loDict, Evaluate("tvPar" + Alltrim(Str(i))), Evaluate("tvPar" + Alltrim(Str(i+1))))
-	EndFor
+	Endfor
 	Return loDict
-EndFunc
+Endfunc
 
 
 Function HASKEY(toDict, tcKey)
@@ -422,92 +424,119 @@ Function HASKEY(toDict, tcKey)
 	Try
 		lbResult = Type('toDict.' + tcKey) != 'U'
 	Catch
-		lbResult = .f.
-	EndTry
-	
-	Return lbResult
-EndFunc
+		lbResult = .F.
+	Endtry
 
+	Return lbResult
+Endfunc
+
+
+Function ADDKEY(toDict, tcKey, tvValue)
+	If !HASKEY(toDict, tcKey)
+		=AddProperty(toDict, tcKey, tvValue)
+	Endif
+Endfunc
+
+Function REMOVEKEY(toDict, tcKey)
+	If Type('toDict') != 'O'
+		Return .F.
+	Endif
+	If HASKEY(toDict, tcKey)
+		=Removeproperty(toDict, tcKey)
+		Return .T.
+	Endif
+	Return .F.
+Endfunc
+
+Function GETVALUE(toDict, tcKey)
+	If Type('toDict') != 'O'
+		Return .Null.
+	Endif
+	If HASKEY(toDict, tcKey)
+		Return Evaluate("toDict." + tcKey)
+	Endif
+	Return .Null.
+Endfunc
 
 Function AKEYS(toDict)
 	Local i, laResult, lnCount
-	lnCount = AMembers(laKeys, toDict, 0, "PHGNUCIBR")
+	lnCount = Amembers(laKeys, toDict, 0, "PHGNUCIBR")
 	If lnCount > 0
 		laResult = Createobject("TFoxExtendsInternalArray")
-		For i = 1 to lnCount
+		For i = 1 To lnCount
 			laResult.Push(laKeys[i])
-		EndFor
+		Endfor
 		Return laResult.GetArray()
 	Else
 		Return .Null.
-	endif
-EndFunc
+	Endif
+Endfunc
 
 Function ASLICE(tArray, tcRange)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 	Local laSlice, lnFirst, lnLast, lnLen, i
 	laSlice = Createobject("TFoxExtendsInternalArray")
 	lnLen = Alen(tArray, 1)
-	Do case
-	case MATCH(tcRange, '^\w+\.\.\w+$') && DIGIT .. DIGIT
+	Do Case
+	Case MATCH(tcRange, '^\w+\.\.\w+$') && DIGIT .. DIGIT
 		lnFirst = AMATCH(tcRange, '\w+', 1)
 		lnFirst = Val(lnFirst[1])
 		lnLast = AMATCH(tcRange, '\w+', 2)
 		lnLast = Val(lnLast[1])
 
-	case MATCH(tcRange, '^\.\.\w+$')	&& .. DIGIT
+	Case MATCH(tcRange, '^\.\.\w+$')	&& .. DIGIT
 		lnFirst = 1
 		lnLast = AMATCH(tcRange, '\w+', 2)
 		lnLast = Val(lnLast[1])
 
-	case MATCH(tcRange, '^\w+\.\.$')	&& DIGIT ..
+	Case MATCH(tcRange, '^\w+\.\.$')	&& DIGIT ..
 		lnFirst = AMATCH(tcRange, '\w+', 1)
 		lnFirst = Val(lnFirst[1])
 		lnLast = lnLen
 
-	case MATCH(tcRange, '^\w+$')	&& +DIGIT
+	Case MATCH(tcRange, '^\w+$')	&& +DIGIT
 		lnFirst = 1
 		lnLast = Val(tcRange)
-	case MATCH(tcRange, '^\-\w+$')	&& -DIGIT		
-		lnFirst = lnLen - Abs(Val(tcRange))	+ 1	
+	Case MATCH(tcRange, '^\-\w+$')	&& -DIGIT
+		lnFirst = lnLen - Abs(Val(tcRange))	+ 1
 		lnLast = lnLen
 	Otherwise
 		lnFirst = 1
 		lnLast = lnLen
-	EndCase
+	Endcase
 	* Check out of bounds
-	If !Between(lnFirst, 1, lnLen) or !Between(lnLast, 1, lnLen)
+	If !Between(lnFirst, 1, lnLen) Or !Between(lnLast, 1, lnLen)
 		Return .Null.
-	EndIf
+	Endif
 
 	* Extract elements
-	For i = lnFirst to lnLast
+	For i = lnFirst To lnLast
 		laSlice.Push(tArray[i])
-	EndFor
-	
+	Endfor
+
 	Return laSlice.GetArray()
-EndFunc
+Endfunc
 
 Function AINTERSECT(tArray1, tArray2)
-	If Type('tArray1', 1) != 'A' or Type('tArray2', 1) != 'A'
+	If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 
 	Local laResult, i, j, k
 	laResult = Createobject("TFoxExtendsInternalArray")
 
-	For i = 1 to Alen(tArray1, 1)
+	For i = 1 To Alen(tArray1, 1)
 		k = Ascan(tArray2, tArray1[i])
 		If k > 0
 			laResult.Push(tArray1[i])
 			k = 0
-		EndIf
-	EndFor
+		Endif
+	Endfor
 
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
@@ -648,7 +677,7 @@ Define Class AnyToString As Custom
 			lcStr = lcStr + '}'
 			Return lcStr
 		Otherwise
-			Return This.GetValue(tValue, Vartype(tValue))
+			Return This.GETVALUE(tValue, Vartype(tValue))
 		Endcase
 	Endfunc
 
@@ -660,7 +689,7 @@ Define Class AnyToString As Custom
 		Set Date &lcDateAct
 	Endfunc
 
-	Function GetValue As String
+	Function GETVALUE As String
 		Lparameters tcValue As String, tctype As Character
 		Do Case
 		Case tctype $ "CDTBGMQVWX"
@@ -1019,7 +1048,7 @@ Define Class TFoxExtendsInternalArray As Custom
 
 	Function Push(tvItem)
 		This.nIndex = This.nIndex + 1
-		
+
 		Dimension This.aCustomArray[this.nIndex]
 		This.aCustomArray[this.nIndex] = tvItem
 	Endfunc
@@ -1123,3 +1152,21 @@ Define Class TFoxExtendsFrmSecret As Form
 
 
 Enddefine
+
+Function NEWGUID
+	* Credits from: https://fox.wikis.com/wc.dll?Wiki~GUIDGenerationCode
+	Local lcbuffer, lnResult, lcGuid, lcResult
+
+	Declare Integer CoCreateGuid In ole32.Dll String@ pguid
+	Declare Integer StringFromGUID2 In ole32.Dll String  pguid, String  @lpszBuffer, Integer cbBuffer
+
+	lcGuid   = Space(16) && 16 Byte = 128 Bit
+	lnResult = CoCreateGuid(@lcGuid)
+	lcbuffer = Space(78)
+	lnResult = StringFromGUID2(lcGuid, @lcbuffer, Len(lcbuffer)/2)
+
+	Clear Dlls "CoCreateGuid", "StringFromGUID2"
+
+	lcResult = Strconv((Left(lcbuffer,(lnResult-1)*2)),6)
+	Return Substr(lcResult, 2, Len(lcResult) - 2) && remove {}
+Endfunc
