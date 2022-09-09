@@ -398,6 +398,7 @@ laCommons = AINTERSECT(@laJustNumbers, @laNumbersAndLetters)
 // NOTE: toDict should be created with HASTABLE(...)
 // ================================================================================
 // Example
+
 loPrices = HASHTABLE('apples', 1.45)
 =ADDKEY(loPrices, 'oranges', 0.75)
 
@@ -406,6 +407,37 @@ loPrices = HASHTABLE('apples', 1.45)
 // NOTE: toDict should be created with HASTABLE(...)
 // ================================================================================
 // Example
+
 loPrices = HASHTABLE('apples', 1.45, 'oranges', 0.75, 'tomatoes', 1.40, 'onions', 0.54, 'book', 1.40)
 =REMOVEKEY(loPrices, 'book') // book should not be in this list of prices.
+
+// ================================================================================
+// 30. ALEFT(tArray, tnExpression): creates an array with the index found on
+// tnExpression starting from left to right.
+// ================================================================================
+// Example
+
+laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
+laTwo = ALEFT(@laFruits, 2)
+? ANYTOSTR(@laTwo) // ["apple", "banana"]
+
+// ================================================================================
+// 31. ARIGHT(tArray, tnExpression): creates an array with the index found on
+// tnExpression starting from right to left.
+// ================================================================================
+// Example
+
+laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
+laTwo = ARIGHT(@laFruits, 2)
+? ANYTOSTR(@laTwo) // ["mango", "raspberry"]
+
+// ================================================================================
+// 33. ASUBSTR(tArray, tnFromExp, tnToExp): creates an array starting from index
+// found in tnFromExp until tnToExp.
+// ================================================================================
+// Example
+
+laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
+laLemonAndMango = ASUBSTR(@laFruits, 5, 2)
+? ANYTOSTR(@laLemonAndMango) // ["lemon", "mango"]
 ```
