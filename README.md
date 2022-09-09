@@ -432,7 +432,7 @@ laTwo = ARIGHT(@laFruits, 2)
 ? ANYTOSTR(@laTwo) // ["mango", "raspberry"]
 
 // ================================================================================
-// 33. ASUBSTR(tArray, tnFromExp, tnToExp): creates an array starting from index
+// 32. ASUBSTR(tArray, tnFromExp, tnToExp): creates an array starting from index
 // found in tnFromExp until tnToExp.
 // ================================================================================
 // Example
