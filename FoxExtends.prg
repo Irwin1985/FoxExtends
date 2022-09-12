@@ -434,6 +434,11 @@ Endfunc
 Function ADDKEY(toDict, tcKey, tvValue)
 	If !HASKEY(toDict, tcKey)
 		=AddProperty(toDict, tcKey, tvValue)
+	Else
+		Try
+			toDict. &tcKey = tvValue
+		Catch
+		Endtry
 	Endif
 Endfunc
 
@@ -536,118 +541,118 @@ Function AINTERSECT(tArray1, tArray2)
 	Endfor
 
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 Function ALEFT(tArray, tnExpression)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
-	
+	Endif
+
 	Local laResult, i, lnExpression, j
 	lnExpression = Evaluate("tnExpression")
 	If Type('lnExpression') != 'N'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 	If lnExpression <= 0
 		Return .F.
-	EndIf		
+	Endif
 	j = Alen(tArray, 1)
 	If lnExpression > j
 		lnExpression = j
-	EndIf
-	
+	Endif
+
 	laResult = Createobject("TFoxExtendsInternalArray")
 	For i = 1 To lnExpression
 		laResult.Push(tArray[i])
 	Endfor
 
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 
 Function ARIGHT(tArray, tnExpression)
 
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
-	
+	Endif
+
 	Local laResult, i, lnExpression, lnArrayLen, lnTo
 	lnExpression = Evaluate("tnExpression")
 	If Type('lnExpression') != 'N'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 
 	If lnExpression <= 0
 		lnExpression = 1
-	EndIf
-	
+	Endif
+
 	lnArrayLen = Alen(tArray, 1)
 
 	If lnExpression > lnArrayLen
 		lnExpression = lnArrayLen
-	endif
+	Endif
 
 	laResult = Createobject("TFoxExtendsInternalArray")
 	lnTo = lnArrayLen-lnExpression
 	If lnTo <= 0
-		For i = 1 to Alen(tArray, 1)		
+		For i = 1 To Alen(tArray, 1)
 			laResult.Push(tArray[i])
-		EndFor
-	else
+		Endfor
+	Else
 		lnTo = lnArrayLen - lnTo
-		i = 1	
-		Do while lnTo >= i	
+		i = 1
+		Do While lnTo >= i
 			If i == 1
 				laResult.Push(tArray[lnArrayLen])
 			Else
 				laResult.Push(tArray[lnArrayLen-i])
-			EndIf
+			Endif
 			i = i + 1
-		EndDo
-	EndIf
+		Enddo
+	Endif
 
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 Function ASUBSTR(tArray, tnFromExp, tnToExp)
 	If Type('tArray', 1) != 'A'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
-	
+	Endif
+
 	Local laResult, i, lnStart, lnEnd, j
 	lnStart = Evaluate("tnFromExp")
 	If Type('lnStart') != 'N'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 
 	lnEnd = Evaluate("tnToExp")
 	If Type('lnEnd') != 'N'
 		Error FUNCTION_ARG_VALUE_INVALID
-	EndIf
+	Endif
 	j = Alen(tArray, 1)
-	
+
 	If !Between(lnStart, 1, j)
-		Return .f.
-	EndIf
-	
+		Return .F.
+	Endif
+
 	If lnEnd <= 0
-		Return .f.
-	EndIf
+		Return .F.
+	Endif
 	If lnEnd > j
 		lnEnd = j
-	EndIf
+	Endif
 
 	laResult = Createobject("TFoxExtendsInternalArray")
 
 	i = 0
-	Do while (lnEnd > 0) and (lnStart+i <= j)
+	Do While (lnEnd > 0) And (lnStart+i <= j)
 		laResult.Push(tArray[lnStart+i])
 		i = i + 1
 		lnEnd = lnEnd - 1
-	EndDo	
+	Enddo
 
 	Return laResult.GetArray()
-EndFunc
+Endfunc
 
 * ========================================================================================== *
 * HELPER FUNCTIONS
