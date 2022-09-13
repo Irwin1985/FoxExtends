@@ -7,7 +7,7 @@ FoxExtends
 
 This library is part of the [VFPX](https://github.com/VFPX) project.
 
-![https://github.com/VFPX](vfpxmember_large.gif)
+![](vfpxmember_large.gif)
 
 Do you like or benefit from my work? please consider make a donation, a cup of coffee would be nice!
 
