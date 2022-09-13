@@ -5,7 +5,7 @@ FoxExtends
 >
 > Suggestions are welcome!
 
-This library is part of the VFPX
+This library is part of the [VFPX](https://github.com/VFPX) project.
 
 ![https://github.com/VFPX](vfpxmember_large.gif)
 
