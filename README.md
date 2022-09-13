@@ -9,7 +9,63 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 
 [![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
 
-## Function documentation
+## Initialization
+
+**FoxExtends** allows you to customize all methods or creating an object by using the constructor method called _NEWFOXEXTENDS()_
+
+## NEWFOXEXTENDS constructor parameters:
+
+- tcPrefix: type any valid identifier to prefix all functions.
+- tcType: allowed values are prg | obj
+
+PRG indicates that all functions will be instantiated in Visual Foxpro global environment (PRG scope).
+OBJ indicates that all functions will be wrapped in an object which means you'll need to consume it like `object.method()`
+
+## Constructor Examples
+```xBase
+// ================================================================================
+// 1. Default behaviour (prg socope)
+// ================================================================================
+
+do FoxExtends.prg
+=NEWFOXEXTENDS() // call constructor without arguments (PRG scope).
+
+laColors = ALIST('red', 'yellow', 'green')
+? ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
+
+// ================================================================================
+// 2. Prefix and PRG scope.
+// ================================================================================
+
+do FoxExtends.prg
+=NEWFOXEXTENDS('FE_') // just provide the prefix for all functions (prg scope)
+
+laColors = FE_ALIST('red', 'yellow', 'green')
+? FE_ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
+
+// ================================================================================
+// 3. No Prefix and OBJECT scope.
+// ================================================================================
+
+do FoxExtends.prg
+loFE = NEWFOXEXTENDS(.F., 'obj') // note the loFE variable receiving the object.
+
+laColors = loFE.ALIST('red', 'yellow', 'green')
+? loFE.ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
+
+// ================================================================================
+// 4. Prefix and OBJECT scope.
+// ================================================================================
+
+do FoxExtends.prg
+loFE = NEWFOXEXTENDS('FE_', 'obj')
+
+laColors = loFE.FE_ALIST('red', 'yellow', 'green')
+? loFE.FE_ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
+
+```
+
+## Function documentation (default behaviour)
 
 ```xBase
 
