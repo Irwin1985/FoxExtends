@@ -394,8 +394,8 @@ laCommons = AINTERSECT(@laJustNumbers, @laNumbersAndLetters)
 ? ANYTOSTR(@laCommons) // [15, 30]
 
 // ================================================================================
-// 28. ADDKEY(toDict, tcKey, tvValue): adds a key to toDict.
-// NOTE: toDict should be created with HASTABLE(...)
+// 28. ADDKEY(toDict, tcKey, tvValue): adds or set a key to toDict.
+// NOTE: toDict should be created with HASHTABLE(...)
 // ================================================================================
 // Example
 
@@ -404,7 +404,7 @@ loPrices = HASHTABLE('apples', 1.45)
 
 // ================================================================================
 // 29. REMOVEKEY(toDict, tcKey): removes a key from toDict.
-// NOTE: toDict should be created with HASTABLE(...)
+// NOTE: toDict should be created with HASHTABLE(...)
 // ================================================================================
 // Example
 
