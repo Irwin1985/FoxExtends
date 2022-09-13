@@ -11,15 +11,15 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 
 ## Initialization
 
-**FoxExtends** allows you to customize all methods or creating an object by using the constructor method called _NEWFOXEXTENDS()_
+**FoxExtends** allows you to customize all methods or creating an object by using the constructor method called `NEWFOXEXTENDS()`
 
 ## NEWFOXEXTENDS constructor parameters:
 
-- tcPrefix: type any valid identifier to prefix all functions.
-- tcType: allowed values are prg | obj
+- `tcPrefix:` type any valid identifier to prefix all functions.
+- `tcType:` allowed values are `prg | obj`
 
-PRG indicates that all functions will be instantiated in Visual Foxpro global environment (PRG scope).
-OBJ indicates that all functions will be wrapped in an object which means you'll need to consume it like `object.method()`
+1. `PRG` indicates that all functions will be instantiated in Visual Foxpro global environment (PRG scope).
+2. `OBJ` indicates that all functions will be wrapped in an object which means you'll need to consume it like `object.method()`
 
 ## Constructor Examples
 ```xBase
