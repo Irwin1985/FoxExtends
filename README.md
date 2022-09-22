@@ -28,7 +28,7 @@ Do you like or benefit from my work? please consider make a donation, a cup of c
 ## Constructor Examples
 ```xBase
 // ================================================================================
-// 1. Default behaviour (prg socope)
+// 1. Default behaviour (prg scope)
 // ================================================================================
 
 do FoxExtends.prg
