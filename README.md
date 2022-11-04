@@ -227,7 +227,7 @@ laResult = AMAP(@laNumbers, "$0 + 5")
 // Example
 
 laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
-laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
+laResult = AFILTER(@laNumbers, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
 ? ANYTOSTR(@laResult) // prints [20,25,30]
 
 // ================================================================================
@@ -239,7 +239,7 @@ laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those item
 // Example
 
 laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
-laResult = AFILTER(@laNumeros, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
+laResult = AFILTER(@laNumbers, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
 ? ANYTOSTR(@laResult) // prints [20,25,30]
 
 // ================================================================================
