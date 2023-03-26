@@ -1,4 +1,4 @@
-Function NEWFOXEXTENDS(tcPrefix, tcType)	
+Function newFoxExtends(tcPrefix, tcType)	
 	Local lcMethodPrefix, lcType, i, lcChar, llUseClass
 
 	lcMethodPrefix = ''
@@ -75,7 +75,7 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 	* HELPER FUNCTIONS
 	* ========================================================================================== *
 	Function CHECKJSONAPP
-		* ¿DOES JSONFOX.APP EXIST?
+		* �DOES JSONFOX.APP EXIST?
 		If !File("JSONFOX.APP")
 			Error JSONFOX_NOT_FOUND
 			Return .F.
@@ -247,7 +247,7 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 			Return tcValue
 		Endfunc
 
-		Function getstring As String
+		Function getString As String
 			Lparameters tcString As String, tlParseUtf8 As Boolean
 			tcString = Allt(tcString)
 			tcString = Strtran(tcString, '\', '\\' )
@@ -275,11 +275,11 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				tcString = Strtran(tcString,'ú','\u00fa')
 				tcString = Strtran(tcString,'ü','\u00fc')
 				tcString = Strtran(tcString,'À','\u00c0')
-				tcString = Strtran(tcString,'Á','\u00c1')
+				tcString = Strtran(tcString,'Ý','\u00c1')
 				tcString = Strtran(tcString,'È','\u00c8')
 				tcString = Strtran(tcString,'É','\u00c9')
 				tcString = Strtran(tcString,'Ì','\u00cc')
-				tcString = Strtran(tcString,'Í','\u00cd')
+				tcString = Strtran(tcString,'Ý','\u00cd')
 				tcString = Strtran(tcString,'Ò','\u00d2')
 				tcString = Strtran(tcString,'Ó','\u00d3')
 				tcString = Strtran(tcString,'Ù','\u00d9')
@@ -685,8 +685,10 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 
 	Enddefine
-
-	Function NEWGUID
+	*------------------------------------------------------------*
+	* newGuid: Generate a new GUID
+	*------------------------------------------------------------*
+	Function newGuid
 		* Credits from: https://fox.wikis.com/wc.dll?Wiki~GUIDGenerationCode
 		Local lcbuffer, lnResult, lcGuid, lcResult
 
@@ -707,7 +709,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 	* FoxExtends main class
 	* ========================================================================= *
 	<<IIF(llUseClass, 'DEFINE CLASS TFOXEXTENDS AS CUSTOM', '')>>
-
+			*------------------------------------------------------------*
+			* PAIR: Create a pair object (key, value)
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>PAIR(tvKey, tvValue)
 				Local loPair
 				loPair = Createobject('Empty')
@@ -715,11 +719,31 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				=AddProperty(loPair, 'value', tvValue)
 				Return loPair
 			Endfunc
-
+			*------------------------------------------------------------*
+			* ANYTOSTR: Convert any value to string
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>ANYTOSTR(tvValue)
 				Return _vfp.fxAnyToString.ToString(@tvValue)
 			Endfunc
 
+			*------------------------------------------------------------*
+			* ARRAY FUNCTIONS
+			*------------------------------------------------------------*			
+			*------------------------------------------------------------*
+			* ALIST: Create an array from a list of parameters
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, ;
+					tvVal11, tvVal12, tvVal13, tvVal14, tvVal15, tvVal16, tvVal17, tvVal18, tvVal19, tvVal20)
+				Local laTuple, i
+				laTuple = Createobject("TFoxExtendsInternalArray")
+				For i = 1 To Pcount()
+					laTuple.Push(Evaluate("tvVal" + Alltrim(Str(i))))
+				Endfor
+				Return laTuple.GetArray()
+			Endfunc			
+			*------------------------------------------------------------*
+			* APUSH: Add an item to the end of an array
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>APUSH(tArray, tvItem)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -729,7 +753,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				Dimension tArray[lnIndex]
 				tArray[lnIndex] = tvItem
 			Endfunc
-
+			*------------------------------------------------------------*
+			* APOP: Remove the last item from an array
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>APOP(tArray)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -747,36 +773,17 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 				Return lvOldVal
 			Endfunc
-
-			Function <<lcMethodPrefix>>AJOIN(tArray, tcSep)
-				If Type('tArray', 1) != 'A'
-					Error FUNCTION_ARG_VALUE_INVALID
-				Endif
-
-				Local lcStr, i, lcVal
-				lcStr = ''
-				For i = 1 To Alen(tArray)
-					lcVal = tArray[i]
-					If i = 1 Then
-						lcStr = lcVal
-					Else
-						lcStr = lcStr + Iif(!Empty(tcSep), tcSep + lcVal, lcVal)
-					Endif
-				Endfor
-				Return lcStr
-			Endfunc
-
+			*------------------------------------------------------------*
+			* ASPLIT: Split a string into an array
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>ASPLIT(tcString, tcDelimiter)
 				Local loString
 				loString = Createobject("TString", tcString)
 				Return loString.Split(tcDelimiter)
 			Endfunc
-
-			Function <<lcMethodPrefix>>MATCH(tcString, tcPattern)
-				_vfp.foxExtendsRegEx.Pattern = tcPattern
-				Return _vfp.foxExtendsRegEx.test(tcString)
-			Endfunc
-
+			*------------------------------------------------------------*
+			* AMATCH: Return an array with all matches
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>AMATCH(tcString, tcPattern, tnOccurrences)
 				Local loResult, laItems, i
 				_vfp.foxExtendsRegEx.Pattern = tcPattern
@@ -796,83 +803,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 				Return laItems.GetArray()
 			Endfunc
-
-			Function <<lcMethodPrefix>>REVERSE(tcString)
-				Local lcValue, i
-				lcValue = ''
-				For i = Len(Alltrim(tcString)) To 1 Step -1
-					lcValue = lcValue + Substr(tcString, i, 1)
-				Endfor
-
-				Return lcValue
-			Endfunc
-
-			Function <<lcMethodPrefix>>JSONTOSTR(tvJsonObj)
-				If !CHECKJSONAPP()
-					Return ''
-				Endif
-
-				Return _Screen.JSON.STRINGIFY(tvJsonObj)
-			Endfunc
-
-			Function <<lcMethodPrefix>>STRTOJSON(tcJSONString)
-				If !CHECKJSONAPP()
-					Return .Null.
-				Endif
-
-				Return _Screen.JSON.PARSE(tcJSONString)
-			Endfunc
-
-			Function <<lcMethodPrefix>>PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, tvVal11)
-				Local loResult, i, loItem, lcValue, j
-
-				_vfp.foxExtendsRegEx.Pattern = "\${\d+}"
-				loResult = _vfp.foxExtendsRegEx.Execute(tcFormat)
-
-				If Type('loResult') != 'O'
-					Return tcFormat
-				Endif
-
-				For i = 1 To loResult.Count
-					loItem = loResult.Item[i-1] && zero based
-					j = Strextract(tcFormat, '${', '}')
-					lcValue = Evaluate("tvVal" + j)
-					tcFormat = Strtran(tcFormat, loItem.Value, Transform(lcValue))
-				Endfor
-				* Convert escaping charcters
-				If At('\t', tcFormat) > 0
-					tcFormat = Strtran(tcFormat, '\t', Chr(9))
-				Endif
-				If At('\r', tcFormat) > 0
-					tcFormat = Strtran(tcFormat, '\r', Chr(13))
-				Endif
-				If At('\n', tcFormat) > 0
-					tcFormat = Strtran(tcFormat, '\n', Chr(10))
-				Endif
-				If At('\"', tcFormat) > 0
-					tcFormat = Strtran(tcFormat, '\"', '"')
-				Endif
-				If At("\'", tcFormat) > 0
-					tcFormat = Strtran(tcFormat, "\'", "'")
-				Endif
-
-				Return tcFormat
-			Endfunc
-
-			Function <<lcMethodPrefix>>ALIST(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, ;
-					tvVal11, tvVal12, tvVal13, tvVal14, tvVal15, tvVal16, tvVal17, tvVal18, tvVal19, tvVal20)
-				Local laTuple, i
-				laTuple = Createobject("TFoxExtendsInternalArray")
-				For i = 1 To Pcount()
-					laTuple.Push(Evaluate("tvVal" + Alltrim(Str(i))))
-				Endfor
-				Return laTuple.GetArray()
-			Endfunc
-
-			Function <<lcMethodPrefix>>CLAMP(tcString, tnFrom, tnTo)
-				Return Substr(tcString, tnFrom, tnTo - tnFrom)
-			Endfunc
-
+			*------------------------------------------------------------*
+			* AMAP: Apply a predicate to each element of an array
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>AMAP(tArray, tcPredicate)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -885,7 +818,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				Endfor
 				Return laResult.GetArray()
 			Endfunc
-
+			*------------------------------------------------------------*
+			* AFILTER: Filter an array
+			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>AFILTER(tArray, tcPredicate)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -900,243 +835,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				Endfor
 				Return laResult.GetArray()
 			Endfunc
-
-			Function <<lcMethodPrefix>>AFIELDSOBJ(tvAliasOrDataSession)
-				Local i, j, k, laData, laProperties, loFieldStruct
-				i = Afields(laFields, tvAliasOrDataSession)
-				laProperties = <<lcMethodPrefix>>ALIST("name", ;
-					"field_type", ;
-					"field_width", ;
-					"decimal_places", ;
-					"null_allowed", ;
-					"code_page_translation_not_allowed", ;
-					"field_validation_expression", ;
-					"field_validation_text", ;
-					"field_default_value", ;
-					"table_validation_expression", ;
-					"table_validation_text", ;
-					"long_table_name", ;
-					"insert_trigger_expression", ;
-					"update_trigger_expression", ;
-					"delete_trigger_expression", ;
-					"table_comment", ;
-					"next_value_for_autoincrementing", ;
-					"step_for_autoincrementing")
-
-				laData = Createobject('TFoxExtendsInternalArray')
-				For j = 1 To i
-					loFieldStruct = Createobject('Empty')
-					For k = 1 To Alen(laProperties)
-						=AddProperty(loFieldStruct, laProperties[k], laFields[j, k])
-					Endfor
-					laData.Push(loFieldStruct)
-				Endfor
-
-				Return laData.GetArray()
-			Endfunc
-
-			Function <<lcMethodPrefix>>ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
-				Local i, j, k, laData, laProperties, loDirStruct
-				Do Case
-				Case Pcount() = 1
-					i = Adir(laDir, tcFileSkeleton)
-				Case Pcount() = 2
-					i = Adir(laDir, tcFileSkeleton, tcAttribute)
-				Case Pcount() = 3
-					i = Adir(laDir, tcFileSkeleton, tcAttribute, tnFlags)
-				Otherwise
-					Return .Null.
-				Endcase
-
-				laProperties = <<lcMethodPrefix>>ALIST("file_name", ;
-					"file_size", ;
-					"date_last_modified", ;
-					"time_last_modified", ;
-					"file_attributes")
-
-				laData = Createobject('TFoxExtendsInternalArray')
-				For j = 1 To i
-					loDirStruct = Createobject('Empty')
-					For k = 1 To Alen(laProperties)
-						=AddProperty(loDirStruct, laProperties[k], laDir[j, k])
-					Endfor
-					laData.Push(loDirStruct)
-				Endfor
-
-				Return laData.GetArray()
-			Endfunc
-
-			Function <<lcMethodPrefix>>SECRETBOX(tcPrompt, tcCaption)
-
-				If Empty(Pcount())
-					Error TOO_FEW_ARGUMENTS
-				Endif
-
-				Local lcPrompt, lcCaption, lcResult, loSecret
-				Store '' To lcPrompt, lcCaption
-
-				Do Case
-				Case Pcount() = 1
-					lcPrompt = tcPrompt
-				Case Pcount() = 2
-					lcPrompt = tcPrompt
-					lcCaption = tcCaption
-				Endcase
-				lcResult = ''
-
-				loSecret = Createobject("TFoxExtendsFrmSecret", lcPrompt, lcCaption)
-				loSecret.Show(1)
-				lcResult = loSecret.cResult
-				Release loSecret
-
-				Return Alltrim(lcResult)
-
-			Endfunc
-
-			Function <<lcMethodPrefix>>ARGS(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
-					tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
-					tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
-					tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
-					tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
-					tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
-					tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
-					tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
-					tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
-					tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
-				Local loVarArg, i
-				loVarArg = Createobject('Empty')
-				=AddProperty(loVarArg, 'args[' + Alltrim(Str(Pcount())) + ']', .Null.)
-				For i = 1 To Pcount()
-					loVarArg.ARGS[i] = Evaluate("tvPar" + Alltrim(Str(i)))
-				Endfor
-				Return loVarArg
-			Endfunc
-
-			Function <<lcMethodPrefix>>APARAMS(toArgs)
-				Local lnNumArgs, laArgs, i
-				lnNumArgs = 0
-				Try
-					lnNumArgs = Alen(toArgs.ARGS)
-				Catch
-					Error FUNCTION_ARG_VALUE_INVALID
-				Endtry
-
-				laArgs = Createobject("TFoxExtendsInternalArray")
-				For i = 1 To lnNumArgs
-					laArgs.Push(toArgs.ARGS[i])
-				Endfor
-
-				Return laArgs.GetArray()
-			Endfunc
-
-			Function <<lcMethodPrefix>>STRINGLIST(toStrList)
-				Local lnCount, i, loStringList
-				lnCount = 0
-				Try
-					lnCount = Alen(toStrList.ARGS)
-				Catch
-				Endtry
-				loStringList = Createobject("TStringList")
-				For i = 1 To lnCount
-					loStringList.Add(toStrList.ARGS[i])
-				Endfor
-
-				Return loStringList
-			Endfunc
-
-			Function <<lcMethodPrefix>>AZIP(tArray1, tArray2)
-				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
-					Error FUNCTION_ARG_VALUE_INVALID
-				Endif
-				Local lnLenArray1, lnLenArray2, i, lnCount, laResult, loPair
-				lnLenArray1 = Alen(tArray1, 1)
-				lnLenArray2 = Alen(tArray2, 1)
-				If lnLenArray1 < lnLenArray2
-					lnCount = lnLenArray1
-				Else
-					lnCount = lnLenArray2
-				Endif
-				laResult = Createobject("TFoxExtendsInternalArray")
-
-				For i = 1 To lnCount
-					loPair = Createobject('Empty')
-					=AddProperty(loPair, 'left', tArray1[i])
-					=AddProperty(loPair, 'right', tArray2[i])
-					laResult.Push(loPair)
-				Endfor
-
-				Return laResult.GetArray()
-			Endfunc
-
-			Function <<lcMethodPrefix>>HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
-					tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
-					tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
-					tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
-					tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
-					tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
-					tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
-					tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
-					tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
-					tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
-				If Mod(Pcount(), 2) = 1
-					Error HASHTABLE_PARAMS_MISTMATCH
-				Endif
-				Local i, loDict
-				loDict = Createobject('Empty')
-				For i = 1 To Pcount() Step 2
-					If Type("tvPar" + Alltrim(Str(i))) != 'C'
-						Error HASHTABLE_INVALID_KEY
-					Endif
-					=AddProperty(loDict, Evaluate("tvPar" + Alltrim(Str(i))), Evaluate("tvPar" + Alltrim(Str(i+1))))
-				Endfor
-				Return loDict
-			Endfunc
-
-
-			Function <<lcMethodPrefix>>HASKEY(toDict, tcKey)
-				Local lbResult
-				Try
-					lbResult = Type('toDict.' + tcKey) != 'U'
-				Catch
-					lbResult = .F.
-				Endtry
-
-				Return lbResult
-			Endfunc
-
-
-			Function <<lcMethodPrefix>>ADDKEY(toDict, tcKey, tvValue)
-				If !<<lcMethodPrefix>>HASKEY(toDict, tcKey)
-					=AddProperty(toDict, tcKey, tvValue)
-				Else
-					Try
-						toDict. &tcKey = tvValue
-					Catch
-					Endtry
-				Endif
-			Endfunc
-
-			Function <<lcMethodPrefix>>REMOVEKEY(toDict, tcKey)
-				If Type('toDict') != 'O'
-					Return .F.
-				Endif
-				If <<lcMethodPrefix>>HASKEY(toDict, tcKey)
-					=Removeproperty(toDict, tcKey)
-					Return .T.
-				Endif
-				Return .F.
-			Endfunc
-
-			Function <<lcMethodPrefix>>GETVALUE(toDict, tcKey)
-				If Type('toDict') != 'O'
-					Return .Null.
-				Endif
-				If <<lcMethodPrefix>>HASKEY(toDict, tcKey)
-					Return Evaluate("toDict." + tcKey)
-				Endif
-				Return .Null.
-			Endfunc
-
+			*-----------------------------------------------------------*
+			* Array functions
+			*-----------------------------------------------------------*
 			Function <<lcMethodPrefix>>AKEYS(toDict)
 				Local i, laResult, lnCount
 				lnCount = Amembers(laKeys, toDict, 0, "PHGNUCIBR")
@@ -1150,7 +851,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 					Return .Null.
 				Endif
 			Endfunc
-
+			*-----------------------------------------------------------*
+			* ASLICE: Returns a slice of an array
+			*-----------------------------------------------------------*
 			Function <<lcMethodPrefix>>ASLICE(tArray, tcRange)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -1197,26 +900,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 				Return laSlice.GetArray()
 			Endfunc
-
-			Function <<lcMethodPrefix>>AINTERSECT(tArray1, tArray2)
-				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
-					Error FUNCTION_ARG_VALUE_INVALID
-				Endif
-
-				Local laResult, i, j, k
-				laResult = Createobject("TFoxExtendsInternalArray")
-
-				For i = 1 To Alen(tArray1, 1)
-					k = Ascan(tArray2, tArray1[i])
-					If k > 0
-						laResult.Push(tArray1[i])
-						k = 0
-					Endif
-				Endfor
-
-				Return laResult.GetArray()
-			Endfunc
-
+			*-----------------------------------------------------------*
+			* ALEFT: Returns the first n elements of an array
+			*-----------------------------------------------------------*
 			Function <<lcMethodPrefix>>ALEFT(tArray, tnExpression)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -1242,8 +928,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 				Return laResult.GetArray()
 			Endfunc
-
-
+			*-----------------------------------------------------------*
+			* ARIGHT: Returns the last n elements of an array
+			*-----------------------------------------------------------*
 			Function <<lcMethodPrefix>>ARIGHT(tArray, tnExpression)
 
 				If Type('tArray', 1) != 'A'
@@ -1287,7 +974,9 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 
 				Return laResult.GetArray()
 			Endfunc
-
+			*-----------------------------------------------------------*
+			* ASUBSTR: Returns a substring of an array
+			*-----------------------------------------------------------*
 			Function <<lcMethodPrefix>>ASUBSTR(tArray, tnFromExp, tnToExp)
 				If Type('tArray', 1) != 'A'
 					Error FUNCTION_ARG_VALUE_INVALID
@@ -1326,6 +1015,497 @@ Function NEWFOXEXTENDS(tcPrefix, tcType)
 				Enddo
 
 				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AUNION: Returns the union of two arrays
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AUNION(tArray1, tArray2)
+				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j, k
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray1, 1)
+					laResult.Push(tArray1[i])
+				Next
+
+				For i = 1 To Alen(tArray2, 1)
+					k = Ascan(tArray1, tArray2[i])
+					If k == 0
+						laResult.Push(tArray2[i])
+					Endif
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* ACONCAT: Returns the concatenation of two arrays
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>ACONCAT(tArray1, tArray2)
+				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j, k
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray1, 1)
+					laResult.Push(tArray1[i])
+				Next
+
+				For i = 1 To Alen(tArray2, 1)
+					laResult.Push(tArray2[i])
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AINTERSECT: Returns the intersection of two arrays
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AINTERSECT(tArray1, tArray2)
+				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j, k
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray1, 1)
+					k = Ascan(tArray2, tArray1[i])
+					If k > 0
+						laResult.Push(tArray1[i])
+					Endif
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AEXCEPT: Returns the difference of two arrays
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AEXCEPT(tArray1, tArray2)
+				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j, k
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray1, 1)
+					k = Ascan(tArray2, tArray1[i])
+					If k == 0
+						laResult.Push(tArray1[i])
+					Endif
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AREVERSE: Returns the reverse of an array
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AREVERSE(tArray)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = Alen(tArray, 1) To 1 Step -1
+					laResult.Push(tArray[i])
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AUNIQUE: Returns the unique elements of an array
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AUNIQUE(tArray)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, k, laCurrentArray
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray, 1)					
+					laCurrentArray = laResult.getArray()
+					k = Ascan(laCurrentArray, tArray[i])
+					If k == 0
+						laResult.Push(tArray[i])
+					Endif
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* AJOIN: Returns the concatenation of the elements of an array
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>AJOIN(tArray, tcSeparator)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local lcResult, i, j
+				lcResult = ''
+
+				For i = 1 To Alen(tArray, 1)
+					lcResult = lcResult + tArray[i]
+					If i < Alen(tArray, 1)
+						lcResult = lcResult + tcSeparator
+					Endif
+				Next
+
+				Return lcResult
+			Endfunc
+			*------------------------------------------------------------*
+			* APARAMS: Return an array of parameters
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>APARAMS(toArgs)
+				Local lnNumArgs, laArgs, i
+				lnNumArgs = 0
+				Try
+					lnNumArgs = Alen(toArgs.ARGS)
+				Catch
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endtry
+
+				laArgs = Createobject("TFoxExtendsInternalArray")
+				For i = 1 To lnNumArgs
+					laArgs.Push(toArgs.ARGS[i])
+				Endfor
+
+				Return laArgs.GetArray()
+			Endfunc
+			*------------------------------------------------------------*
+			* AZIP: Return an array of pairs
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>AZIP(tArray1, tArray2)
+				If Type('tArray1', 1) != 'A' Or Type('tArray2', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+				Local lnLenArray1, lnLenArray2, i, lnCount, laResult, loPair
+				lnLenArray1 = Alen(tArray1, 1)
+				lnLenArray2 = Alen(tArray2, 1)
+				If lnLenArray1 < lnLenArray2
+					lnCount = lnLenArray1
+				Else
+					lnCount = lnLenArray2
+				Endif
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To lnCount
+					loPair = Createobject('Empty')
+					=AddProperty(loPair, 'left', tArray1[i])
+					=AddProperty(loPair, 'right', tArray2[i])
+					laResult.Push(loPair)
+				Endfor
+
+				Return laResult.GetArray()
+			Endfunc			
+			*------------------------------------------------------------*
+			* AFIELDSOBJ: Return an array of field objects
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>AFIELDSOBJ(tvAliasOrDataSession)
+				Local i, j, k, laData, laProperties, loFieldStruct
+				i = Afields(laFields, tvAliasOrDataSession)
+				laProperties = <<lcMethodPrefix>>ALIST("name", ;
+					"field_type", ;
+					"field_width", ;
+					"decimal_places", ;
+					"null_allowed", ;
+					"code_page_translation_not_allowed", ;
+					"field_validation_expression", ;
+					"field_validation_text", ;
+					"field_default_value", ;
+					"table_validation_expression", ;
+					"table_validation_text", ;
+					"long_table_name", ;
+					"insert_trigger_expression", ;
+					"update_trigger_expression", ;
+					"delete_trigger_expression", ;
+					"table_comment", ;
+					"next_value_for_autoincrementing", ;
+					"step_for_autoincrementing")
+
+				laData = Createobject('TFoxExtendsInternalArray')
+				For j = 1 To i
+					loFieldStruct = Createobject('Empty')
+					For k = 1 To Alen(laProperties)
+						=AddProperty(loFieldStruct, laProperties[k], laFields[j, k])
+					Endfor
+					laData.Push(loFieldStruct)
+				Endfor
+
+				Return laData.GetArray()
+			Endfunc
+			*------------------------------------------------------------*
+			* ADIROBJ: Return an array of directory objects
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>ADIROBJ(tcFileSkeleton, tcAttribute, tnFlags)
+				Local i, j, k, laData, laProperties, loDirStruct
+				Do Case
+				Case Pcount() = 1
+					i = Adir(laDir, tcFileSkeleton)
+				Case Pcount() = 2
+					i = Adir(laDir, tcFileSkeleton, tcAttribute)
+				Case Pcount() = 3
+					i = Adir(laDir, tcFileSkeleton, tcAttribute, tnFlags)
+				Otherwise
+					Return .Null.
+				Endcase
+
+				laProperties = <<lcMethodPrefix>>ALIST("file_name", ;
+					"file_size", ;
+					"date_last_modified", ;
+					"time_last_modified", ;
+					"file_attributes")
+
+				laData = Createobject('TFoxExtendsInternalArray')
+				For j = 1 To i
+					loDirStruct = Createobject('Empty')
+					For k = 1 To Alen(laProperties)
+						=AddProperty(loDirStruct, laProperties[k], laDir[j, k])
+					Endfor
+					laData.Push(loDirStruct)
+				Endfor
+
+				Return laData.GetArray()
+			Endfunc			
+			*------------------------------------------------------------*
+			* MATCH: Check if a string matches a pattern
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>MATCH(tcString, tcPattern)
+				_vfp.foxExtendsRegEx.Pattern = tcPattern
+				Return _vfp.foxExtendsRegEx.test(tcString)
+			Endfunc
+
+			*------------------------------------------------------------*
+			* STRING FUNCTIONS
+			*------------------------------------------------------------*
+			*------------------------------------------------------------*
+			* REVERSE: Reverse a string
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>REVERSE(tcString)
+				Local lcValue, i
+				lcValue = ''
+				For i = Len(Alltrim(tcString)) To 1 Step -1
+					lcValue = lcValue + Substr(tcString, i, 1)
+				Endfor
+
+				Return lcValue
+			Endfunc
+			*------------------------------------------------------------*
+			* JSONTOSTR: Convert a JSON object to a string
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>JSONTOSTR(tvJsonObj)
+				If !CHECKJSONAPP()
+					Return ''
+				Endif
+
+				Return _Screen.JSON.STRINGIFY(tvJsonObj)
+			Endfunc
+			*------------------------------------------------------------*
+			* STRTOJSON: Convert a string to a JSON object
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>STRTOJSON(tcJSONString)
+				If !CHECKJSONAPP()
+					Return .Null.
+				Endif
+
+				Return _Screen.JSON.PARSE(tcJSONString)
+			Endfunc
+			*------------------------------------------------------------*
+			* PRINTF: Format a string
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>PRINTF(tcFormat, tvVal0, tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, tvVal11)
+				Local loResult, i, loItem, lcValue, j
+
+				_vfp.foxExtendsRegEx.Pattern = "\${\d+}"
+				loResult = _vfp.foxExtendsRegEx.Execute(tcFormat)
+
+				If Type('loResult') != 'O'
+					Return tcFormat
+				Endif
+
+				For i = 1 To loResult.Count
+					loItem = loResult.Item[i-1] && zero based
+					j = Strextract(tcFormat, '${', '}')
+					lcValue = Evaluate("tvVal" + j)
+					tcFormat = Strtran(tcFormat, loItem.Value, Transform(lcValue))
+				Endfor
+				* Convert escaping charcters
+				If At('\t', tcFormat) > 0
+					tcFormat = Strtran(tcFormat, '\t', Chr(9))
+				Endif
+				If At('\r', tcFormat) > 0
+					tcFormat = Strtran(tcFormat, '\r', Chr(13))
+				Endif
+				If At('\n', tcFormat) > 0
+					tcFormat = Strtran(tcFormat, '\n', Chr(10))
+				Endif
+				If At('\"', tcFormat) > 0
+					tcFormat = Strtran(tcFormat, '\"', '"')
+				Endif
+				If At("\'", tcFormat) > 0
+					tcFormat = Strtran(tcFormat, "\'", "'")
+				Endif
+
+				Return tcFormat
+			Endfunc
+			*------------------------------------------------------------*
+			* CLAMP: Return a substring
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>CLAMP(tcString, tnFrom, tnTo)
+				Return Substr(tcString, tnFrom, tnTo - tnFrom)
+			Endfunc
+			*------------------------------------------------------------*
+			* SECRETBOX: Show a secret input box for password, etc.
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>SECRETBOX(tcPrompt, tcCaption)
+
+				If Empty(Pcount())
+					Error TOO_FEW_ARGUMENTS
+				Endif
+
+				Local lcPrompt, lcCaption, lcResult, loSecret
+				Store '' To lcPrompt, lcCaption
+
+				Do Case
+				Case Pcount() = 1
+					lcPrompt = tcPrompt
+				Case Pcount() = 2
+					lcPrompt = tcPrompt
+					lcCaption = tcCaption
+				Endcase
+				lcResult = ''
+
+				loSecret = Createobject("TFoxExtendsFrmSecret", lcPrompt, lcCaption)
+				loSecret.Show(1)
+				lcResult = loSecret.cResult
+				Release loSecret
+
+				Return Alltrim(lcResult)
+
+			Endfunc
+			*------------------------------------------------------------*
+			* ARGS: Return an array of arguments
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>ARGS(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
+					tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
+					tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
+					tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
+					tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
+					tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
+					tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
+					tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
+					tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
+					tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
+				Local loVarArg, i
+				loVarArg = Createobject('Empty')
+				=AddProperty(loVarArg, 'args[' + Alltrim(Str(Pcount())) + ']', .Null.)
+				For i = 1 To Pcount()
+					loVarArg.ARGS[i] = Evaluate("tvPar" + Alltrim(Str(i)))
+				Endfor
+				Return loVarArg
+			Endfunc		
+			*------------------------------------------------------------*
+			* STRINGLIST: Return a TStringList object
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>STRINGLIST(toStrList)
+				Local lnCount, i, loStringList
+				lnCount = 0
+				Try
+					lnCount = Alen(toStrList.ARGS)
+				Catch
+				Endtry
+				loStringList = Createobject("TStringList")
+				For i = 1 To lnCount
+					loStringList.Add(toStrList.ARGS[i])
+				Endfor
+
+				Return loStringList
+			Endfunc
+			*------------------------------------------------------------*
+			* DICTIONARY FUNCTIONS
+			*------------------------------------------------------------*
+			*------------------------------------------------------------*
+			* HASHTABLE: Return a THashtable object
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>HASHTABLE(tvPar1, tvPar2, tvPar3, tvPar4, tvPar5, tvPar6, tvPar7, tvPar8, tvPar9, tvPar10, ;
+					tvPar11, tvPar12, tvPar13, tvPar14, tvPar15, tvPar16, tvPar17, tvPar18, tvPar19, tvPar20, ;
+					tvPar21, tvPar22, tvPar23, tvPar24, tvPar25, tvPar26, tvPar27, tvPar28, tvPar29, tvPar30, ;
+					tvPar31, tvPar32, tvPar33, tvPar34, tvPar35, tvPar36, tvPar37, tvPar38, tvPar39, tvPar40, ;
+					tvPar41, tvPar42, tvPar43, tvPar44, tvPar45, tvPar46, tvPar47, tvPar48, tvPar49, tvPar50, ;
+					tvPar51, tvPar52, tvPar53, tvPar54, tvPar55, tvPar56, tvPar57, tvPar58, tvPar59, tvPar60, ;
+					tvPar61, tvPar62, tvPar63, tvPar64, tvPar65, tvPar66, tvPar67, tvPar68, tvPar69, tvPar70, ;
+					tvPar71, tvPar72, tvPar73, tvPar74, tvPar75, tvPar76, tvPar77, tvPar78, tvPar79, tvPar80, ;
+					tvPar81, tvPar82, tvPar83, tvPar84, tvPar85, tvPar86, tvPar87, tvPar88, tvPar89, tvPar90, ;
+					tvPar91, tvPar92, tvPar93, tvPar94, tvPar95, tvPar96, tvPar97, tvPar98, tvPar99, tvPar100)
+				If Mod(Pcount(), 2) = 1
+					Error HASHTABLE_PARAMS_MISTMATCH
+				Endif
+				Local i, loDict
+				loDict = Createobject('Empty')
+				For i = 1 To Pcount() Step 2
+					If Type("tvPar" + Alltrim(Str(i))) != 'C'
+						Error HASHTABLE_INVALID_KEY
+					Endif
+					=AddProperty(loDict, Evaluate("tvPar" + Alltrim(Str(i))), Evaluate("tvPar" + Alltrim(Str(i+1))))
+				Endfor
+				Return loDict
+			Endfunc
+			*------------------------------------------------------------*
+			* HASKEY: Return true if the key exists in the dictionary
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>HASKEY(toDict, tcKey)
+				Local lbResult
+				Try
+					lbResult = Type('toDict.' + tcKey) != 'U'
+				Catch
+					lbResult = .F.
+				Endtry
+
+				Return lbResult
+			Endfunc
+			*------------------------------------------------------------*
+			* ADDKEY: Add a key to the dictionary
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>ADDKEY(toDict, tcKey, tvValue)
+				If !<<lcMethodPrefix>>HASKEY(toDict, tcKey)
+					=AddProperty(toDict, tcKey, tvValue)
+				Else
+					Try
+						toDict. &tcKey = tvValue
+					Catch
+					Endtry
+				Endif
+			Endfunc
+			*------------------------------------------------------------*
+			* REMOVEKEY: Remove a key from the dictionary
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>REMOVEKEY(toDict, tcKey)
+				If Type('toDict') != 'O'
+					Return .F.
+				Endif
+				If <<lcMethodPrefix>>HASKEY(toDict, tcKey)
+					=Removeproperty(toDict, tcKey)
+					Return .T.
+				Endif
+				Return .F.
+			Endfunc
+			*------------------------------------------------------------*
+			* GETVALUE: Return the value of the key
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>GETVALUE(toDict, tcKey)
+				If Type('toDict') != 'O'
+					Return .Null.
+				Endif
+				If <<lcMethodPrefix>>HASKEY(toDict, tcKey)
+					Return Evaluate("toDict." + tcKey)
+				Endif
+				Return .Null.
 			Endfunc
 		<<IIF(llUseClass, 'ENDDEFINE', '')>>
 	ENDTEXT
