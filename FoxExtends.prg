@@ -819,6 +819,23 @@ Function newFoxExtends(tcPrefix, tcType)
 				Return laResult.GetArray()
 			Endfunc
 			*------------------------------------------------------------*
+			* AEVERY: Return true if all elements of an array match a predicate
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>AEVERY(tArray, tcPredicate)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+				Local laResult, i, lcExp
+				laResult = Createobject("TFoxExtendsInternalArray")
+				For i = 1 To Alen(tArray, 1)
+					lcExp = Strtran(tcPredicate, "$0", Transform(tArray[i]))
+					If !Evaluate(lcExp)
+						Return .F.
+					Endif
+				Endfor
+				Return .T.
+			Endfunc
+			*------------------------------------------------------------*
 			* AFILTER: Filter an array
 			*------------------------------------------------------------*
 			Function <<lcMethodPrefix>>AFILTER(tArray, tcPredicate)
@@ -834,6 +851,19 @@ Function newFoxExtends(tcPrefix, tcType)
 					Endif
 				Endfor
 				Return laResult.GetArray()
+			Endfunc
+			*------------------------------------------------------------*
+			* FOREACH: Apply a function to each element of an array
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>FOREACH(tArray, tcFunction)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+				Local i, lcExp
+				For i = 1 To Alen(tArray, 1)
+					lcExp = Strtran(tcFunction, "$0", Transform(tArray[i]))
+					Evaluate(lcExp)
+				Endfor
 			Endfunc
 			*-----------------------------------------------------------*
 			* Array functions
@@ -1057,6 +1087,23 @@ Function newFoxExtends(tcPrefix, tcType)
 
 				For i = 1 To Alen(tArray2, 1)
 					laResult.Push(tArray2[i])
+				Next
+
+				Return laResult.GetArray()
+			Endfunc
+			*-----------------------------------------------------------*
+			* ACLONE: Returns a clone of an array
+			*-----------------------------------------------------------*
+			Function <<lcMethodPrefix>>ACLONE(tArray)
+				If Type('tArray', 1) != 'A'
+					Error FUNCTION_ARG_VALUE_INVALID
+				Endif
+
+				Local laResult, i, j, k
+				laResult = Createobject("TFoxExtendsInternalArray")
+
+				For i = 1 To Alen(tArray, 1)
+					laResult.Push(tArray[i])
 				Next
 
 				Return laResult.GetArray()

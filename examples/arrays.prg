@@ -59,3 +59,9 @@ laUniqueFruits = aUnique(@laFruits)
 
 
 ? "The array has " + transform(alen(laFruits)) + " elements"
+
+* Clone the array
+local laClonedFruits
+laClonedFruits = aClone(@laFruits)
+
+? "Cloned fruits: ", anyToStr(@laClonedFruits)
