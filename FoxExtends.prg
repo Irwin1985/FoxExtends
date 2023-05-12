@@ -727,6 +727,20 @@ Function newFoxExtends(tcPrefix, tcType)
 			Endfunc
 
 			*------------------------------------------------------------*
+			* ENUM: Create an enumeration object
+			* Max 20 values
+			*------------------------------------------------------------*
+			Function <<lcMethodPrefix>>ENUM(tvVal1, tvVal2, tvVal3, tvVal4, tvVal5, tvVal6, tvVal7, tvVal8, tvVal9, tvVal10, ;
+					tvVal11, tvVal12, tvVal13, tvVal14, tvVal15, tvVal16, tvVal17, tvVal18, tvVal19, tvVal20)
+				Local loEnum, i
+				loEnum = Createobject("Empty")
+				For i = 1 To Pcount()
+					=AddProperty(loEnum, Evaluate("tvVal" + Alltrim(Str(i))), i)
+				Endfor
+				Return loEnum
+			EndFunc
+
+			*------------------------------------------------------------*
 			* ARRAY FUNCTIONS
 			*------------------------------------------------------------*			
 			*------------------------------------------------------------*
