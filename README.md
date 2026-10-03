@@ -1,503 +1,178 @@
-FoxExtends
-==========
+# FoxExtends
 
-> I like to think that the following features are what they would have implemented in version 10 of Visual FoxPro
->
-> Suggestions are welcome!
+Functions Visual FoxPro 9 never had: text formatting with placeholders, GUIDs, enums,
+regular expressions, `ADIR()` and `AFIELDS()` with named properties, and a password box.
+One `.prg`, nothing to initialise.
 
-This library is part of the [VFPX](https://github.com/VFPX) project.
-
-![](vfpxmember_large.gif)
-
-Do you like or benefit from my work? please consider make a donation, a cup of coffee would be nice!
-
-[![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
-
-## Initialization
-
-**FoxExtends** allows you to customize all methods or creating an object by using the constructor method called `NEWFOXEXTENDS()`
-
-## NEWFOXEXTENDS constructor parameters:
-
-- `tcPrefix:` type any valid identifier to prefix all functions.
-- `tcType:` allowed values are `prg | obj`
-
-1. `PRG` indicates that all functions will be instantiated in Visual Foxpro global environment (PRG scope).
-2. `OBJ` indicates that all functions will be wrapped in an object which means you'll need to consume it like `object.method()`
-
-## Constructor Examples
-```xBase
-// ================================================================================
-// 1. Default behaviour (prg scope)
-// ================================================================================
-
-do FoxExtends.prg
-=NEWFOXEXTENDS() // call constructor without arguments (PRG scope).
-
-laColors = ALIST('red', 'yellow', 'green')
-? ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
-
-// ================================================================================
-// 2. Prefix and PRG scope.
-// ================================================================================
-
-do FoxExtends.prg
-=NEWFOXEXTENDS('FE_') // just provide the prefix for all functions (prg scope)
-
-laColors = FE_ALIST('red', 'yellow', 'green')
-? FE_ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
-
-// ================================================================================
-// 3. No Prefix and OBJECT scope.
-// ================================================================================
-
-do FoxExtends.prg
-loFE = NEWFOXEXTENDS(.F., 'obj') // note the loFE variable receiving the object.
-
-laColors = loFE.ALIST('red', 'yellow', 'green')
-? loFE.ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
-
-// ================================================================================
-// 4. Prefix and OBJECT scope.
-// ================================================================================
-
-do FoxExtends.prg
-loFE = NEWFOXEXTENDS('FE_', 'obj')
-
-laColors = loFE.FE_ALIST('red', 'yellow', 'green')
-? loFE.FE_ANYTOSTR(@laColors) // ['red', 'yellow', 'green']
+## Install
 
 ```
-
-## Function documentation (default behaviour)
-
-```xBase
-
-// ================================================================================
-// 1. PAIR(tvKey, tvValue): create a Key-Value object with the data provided:
-// ================================================================================
-
-// Example
-
-loPair = PAIR("name", "John")
-? loPair.key, loPair.value
-
-// ================================================================================
-// 2. ANYTOSTR(tvValue): convert any object into string (including Collections):
-// ================================================================================
-
-// Example
-? ANYTOSTR(_SCREEN) // the whole screen object :)
-
-// ================================================================================
-// 3. APUSH(tArray, tvItem): adds an element into the array 
-// NOTE: YOU MUST PASS THE ARRAY AS REFERENCE
-// ================================================================================
-// Example
-
-DIMENSION laCountries[1]
-laCountries[1] = "USA"
-APUSH(@laCountries, "COLOMBIA")
-APUSH(@laCountries, "ARGENTINA")
-APUSH(@laCountries, "ESPAÑA")
-
-// ================================================================================
-// 4. APOP(tArray): removes an element from the top of the array. 
-// NOTE: YOU MUST PASS THE ARRAY AS REFERENCE
-// ================================================================================
-// Example
-
-DIMENSION laCountries[4]
-laCountries[1] = "USA"
-laCountries[2] = "COLOMBIA"
-laCountries[3] = "ARGENTINA"
-laCountries[4] = "ESPAÑA"
-// Remove and retrieve the removed element
-? APOP(@laCountries) // print ESPAÑA
-
-// ================================================================================
-// 5. AJOIN(tArray, tcStep): return a string with all array elements delitemited by tcStep
-// ================================================================================
-// Example
-
-DIMENSION laCountries[4]
-laCountries[1] = "USA"
-laCountries[2] = "COLOMBIA"
-laCountries[3] = "ARGENTINA"
-laCountries[4] = "ESPAÑA"
-
-? AJOIN(@laCountries, ', ') // prints USA, COLOMBIA, ARGENTINA, ESPAÑA
-
-// ================================================================================
-// 6. ASPLIT(tcString, tcDelimiter): Creates an array with all matches in the string provided.
-// ================================================================================
-// Example
-
-laColors = ASPLIT("Red, Yellow, Blue, Green, Purple", ',')
-FOR EACH lcColor IN laColors
-  ? lcColor
-ENDFOR
-
-// ================================================================================
-// 7. MATCH(tcString, tcPattern): check if the tcPattern matches in the string provided. 
-// NOTE: this function relies on VBScript.RegExp
-// ================================================================================
-// Example
-
-// Validate an email format
-? MATCH("rodriguez.irwin@gmail.com", "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$") // print .T.
-
-
-// ================================================================================
-// 8. REVERSE(tcString): reverses a string
-// ================================================================================
-// Example
-
-? REVERSE("Irwin") // niwrI
-
-// ================================================================================
-// 9. STRTOJSON(tcJSONStr): receive a json string and creates a Foxpro equivalent object.
-// NOTE: this function relies on JSONFOX: https://github.com/Irwin1985/JSONFox
-// ================================================================================
-// Example
-
-loMyJson = STRTOJSON('{"name": "John", "age": 36}')
-? loMyJson.name
-? loMyJson.age
-
-// ================================================================================
-// 10. JSONTOSTR(tvJsonObj): pretty print the Foxpro equivalent json object.
-// ================================================================================
-// Example
-
-? JSONTOSTR(loMyJson) // {"name": "John", "age": 36}
-
-// ================================================================================
-// 11. PRINTF(tcFormat, tvVal0...tvVal10): pretty prints up to ten values.
-// you can even escape some special characters like: \t, \r, \n, \", \'
-// NOTE: sorry for this limitation of ten arguments.
-// ================================================================================
-// Example
-
-? PRINTF("Hello ${0}! My name is ${1} and I'm glad to ${2} you!", "world", "John", "meet")
-
-// ================================================================================
-// 12. ALIST(tvVal1, tvVal2, tvVal3,...tvVal10): creates an array up to ten 
-// heterogeneous elements.
-// 
-// NOTE: sorry for this limitation of ten arguments.
-// ================================================================================
-// Example
-
-laData = ALIST("John", 36, .T., .F., .Null., PAIR("Bank of America", "NL40RABO8933084452"), "john@gmail.com")
-FOR EACH lItem IN laData
-  ? lItem
-ENDFOR
-
-// print the pair (at index 6!!!)
-? laData[6].key // prints Bank of America
-? laData[6].value // prints NL40RABO8933084452
-
-// ================================================================================
-// 13. CLAMP(tcString, tnFrom, tnTo): captures a range of characters. 
-// ================================================================================
-// Example
-
-lcString = "This is a string"
-? CLAMP(lcString, 6, 10) // prints "is a"
-
-// ================================================================================
-// 14. AMAP(tArray, tcPredicate): returns an array with tcPredicate expression
-// applied.
-//
-// LIMITATIONS: the array must be one-dimensional and homogeneous.
-// ================================================================================
-// Example
-
-laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
-laResult = AMAP(@laNumbers, "$0 + 5")
-? ANYTOSTR(@laResult) // prints [10,15,20,25,30,35,40,45]
-
-// ================================================================================
-// 15. AFILTER(tArray, tcPredicate): returns all items from tArray that returns .T.
-// by applying the tcPredicate expression.
-//
-// LIMITATIONS: the array must be one-dimensional and homogeneous.
-// ================================================================================
-// Example
-
-laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
-laResult = AFILTER(@laNumbers, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
-? ANYTOSTR(@laResult) // prints [20,25,30]
-
-// ================================================================================
-// 15. AFILTER(tArray, tcPredicate): returns all items from tArray that returns .T.
-// by applying the tcPredicate expression.
-//
-// LIMITATIONS: the array must be one-dimensional and homogeneous.
-// ================================================================================
-// Example
-
-laNumbers = ALIST(5, 10, 15, 20, 25, 30, 35, 40)
-laResult = AFILTER(@laNumbers, "BETWEEN($0, 20,  30)") // filter just those items with this range (20 and 30)
-? ANYTOSTR(@laResult) // prints [20,25,30]
-
-// ================================================================================
-// 16. AFIELDSOBJ(tcAliasOrDataSession)
-// returns an array mapped with all the table structure info.
-// check AFIELDS() documentation for property names.
-// ================================================================================
-// Example
-
-Use Home(2) + "\northwind\employees.dbf"
-laFields = AFIELDSOBJ('employees')
-? ANYTOSTR(laFields) // prints a nice json format :)
-
-// print all properties
-FOR EACH loItem IN laFields
-  ? loItem.name
-  ? loItem.field_type
-  ? loItem.field_width
-  ? loItem.decimal_places
-  ? loItem.null_allowed
-  ? loItem.code_page_translation_not_allowed
-  ? loItem.field_validation_expression
-  ? loItem.field_validation_text
-  ? loItem.field_default_value
-  ? loItem.table_validation_expression
-  ? loItem.table_validation_text
-  ? loItem.long_table_name
-  ? loItem.insert_trigger_expression
-  ? loItem.update_trigger_expression
-  ? loItem.delete_trigger_expression
-  ? loItem.table_comment
-  ? loItem.next_value_for_autoincrementing
-  ? loItem.step_for_autoincrementing
-ENDFOR
-
-// ================================================================================
-// 17. ADIROBJ(tcFileSkeleton, [tcAttribute, [tnFlags]])
-// returns an array mapped with all the files structure info.
-// check ADIR() documentation for property names.
-// ================================================================================
-// Example
-
-laDir = ADIROBJ("c:\my\path\*.txt")
-? ANYTOSTR(laDir) // prints a nice json format :)
-
-// print all properties
-FOR EACH loItem IN laDir
-  ? loItem.file_name
-  ? loItem.file_size
-  ? loItem.date_last_modified
-  ? loItem.time_last_modified
-  ? loItem.file_attributes
-ENDFOR
-
-// ================================================================================
-// 18. SECRETBOX(tcPrompt, [tcCaption])
-// Displays a modal dialog used for typing secret passwords.
-// NOTE: the result string is not encrypted, it's just a raw string.
-// ================================================================================
-// Example
-
-lcPassword = SECRETBOX("Login", "Please type your password")
-IF lcPassword != "Admin" THEN
-  ? "Access Denied!"
-  RETURN
-ENDIF
-
-? "Welcome!"
-
-// ================================================================================
-// 19. Variadic functions with ARGS() and APARAMS()
-// This implementation allows us to simulate variadic functions and avoid passing
-// a lot of arguments.
-// ARGS(arg1, arg2, argn): wraps all arguments inside a special object. (caller)
-// APARAMS(toArgs): unwraps all arguments into an array. (function body)
-// ================================================================================
-// Example
-? arithmeticOperation("+", ARGS(5, 10, 15, 20, 25, 30))
-
-FUNCTION arithmeticOperation(tcOperator, toOperands)
-  LOCAL lnResult, laParams
-  lnResult = 0
-  laParams = APARAMS(toOperands) // unwrap arguments	
-  FOR EACH lnOperand IN laParams
-    lnResult = lnResult &tcOperator lnOperand
-  ENDFOR
-  
-  RETURN lnResult
-ENDFUNC
-
-// ================================================================================
-// 20. STRINGLIST(): creates an string object that enhance the string manipulation
-// NOTE: it's constructor accepts ARGS() parameters. See ARGS() and APARAMS()
-// ================================================================================
-// Example
-laLanguages = STRINGLIST() // empty stringlist
-laLanguages.Add("Visual FoxPro")
-laLanguages.Add("Swift")
-laLanguages.Add("Nim")
-laLanguages.Add("V")
-? laLanguages.Join(', ') // print "Visual FoxPro, Swift, Nim, V"
-
-// Example 2: using the constructor.
-laStuffs = STRINGLIST(ARGS("House", "Horse", "Pencil"))
-laStuffs.Add("Red")
-laStuffs.Add("Person")
-laStuffs.Add("Table")
-
-? laStuffs.Join(', ')
-
-// ================================================================================
-// 21. AZIP(tArray1, tArray2): returns a new array with the combination of two
-// arrays provided. Each element must be accessed by using the 'left' and 'right'
-// properties.
-// ================================================================================
-// Example
-
-laFruits = ALIST("Apples", "Bananas", "Strawberry")
-laVegetables = ALIST("Tomato", "Carrot", "Pumpkins")
-
-laFusion = AZIP(@laFruits, @laVegetables)
-
-FOR EACH loItem IN laFusion
-  ? loItem.left
-  ? loItem.right
-ENDFOR
-
-// ================================================================================
-// 22. HASHTABLE(tcKey2, tcValue1 [,...]): creates a dictionary with the given
-// keys and values.
-// LIMITATION:
-// 1. keys must be strings
-// 2. the function takes up to 50 key-values params.
-// ================================================================================
-// Example
-
-loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
-
-? loDictionary.name
-? loDictionary.age
-? loDictionary.gender
-? loDictionary.salary
-
-// ================================================================================
-// 23. HASKEY(toDictionary, tcKey): determines if tcKey exists in toDictionary
-// ================================================================================
-// Example
-
-loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
-? HASKEY(loDictionary, "name") // .T.
-? HASKEY(loDictionary, "address") // .F.
-
-// ================================================================================
-// 24. AKEYS(toDictionary): returns an array with all keys found in toDictionary
-// ================================================================================
-// Example
-loDictionary = HASHTABLE("name", "John", "age", 36, "gender", "M", "salary", 3000)
-laKeys = AKEYS(loDictionary)
-?ANYTOSTR(@laKeys) // ["NAME", "AGE", "GENDER", "SALARY"]
-
-// ================================================================================
-// 25. ASLICE(tArray, tcRange): creates an array with the range provided.
-// ================================================================================
-// Example
-
-laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
-laSlice = ASLICE(@laFruits, "2..3") // from index 2 until index 3
-? ANYTOSTR(@laSlice) // ["banana", "blackberry"]
-
-laSlice = ASLICE(@laFruits, "..3") // from index 1 up to 3
-? ANYTOSTR(@laSlice) // ["apple", "banana", "blackberry"]
-
-laSlice = ASLICE(@laFruits, "5..") // from index 5 up to the end of the array.
-? ANYTOSTR(@laSlice) // ["lemon", "mango", "raspberry"]
-
-laSlice = ASLICE(@laFruits, "3") // first 3 elements
-? ANYTOSTR(@laSlice) // ["apple", "banana", "blackberry"]
-
-laSlice = ASLICE(@laFruits, "-2") // last 2 elements
-? ANYTOSTR(@laSlice) // ["mango", "raspberry"]
-
-// ================================================================================
-// 26. AMATCH(tcString, tcPattern, tcOccurrences): creates an array with the
-// ocurrences found in tcString by applying the tcPattern regular expression.
-// ================================================================================
-// Example
-
-lcString = "Hi, foxextends has more than 20 functions...! can you help me to make it 100?"
-laResult = AMATCH(lcString, "\w+", 1) // first number
-? laResult[1] // 20
-
-laResult = AMATCH(lcString, "\w+", 2) // second number
-? laResult[1] // 100
-
-// ================================================================================
-// 27. AINSERSECT(tArray1, tArray2): creates an array with all elements in tArray1
-// that are present in tArray2.
-// ================================================================================
-// Example
-
-laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
-laSalad = ALIST("tomato", "grape", "onion", "pumpkin", "lemon")
-
-laCommons = AINTERSECT(@laFruits, @laSalad)
-? ANYTOSTR(@laCommons) // ["grape", "lemon"]
-
-// Example # 2: compare heterogeneous arrays
-laJustNumbers = ALIST(5, 10, 15, 20, 25, 30)
-laNumbersAndLetters = ALIST("five", "ten", 15, 30, 100)
-
-laCommons = AINTERSECT(@laJustNumbers, @laNumbersAndLetters)
-? ANYTOSTR(@laCommons) // [15, 30]
-
-// ================================================================================
-// 28. ADDKEY(toDict, tcKey, tvValue): adds or set a key to toDict.
-// NOTE: toDict should be created with HASHTABLE(...)
-// ================================================================================
-// Example
-
-loPrices = HASHTABLE('apples', 1.45)
-=ADDKEY(loPrices, 'oranges', 0.75)
-
-// ================================================================================
-// 29. REMOVEKEY(toDict, tcKey): removes a key from toDict.
-// NOTE: toDict should be created with HASHTABLE(...)
-// ================================================================================
-// Example
-
-loPrices = HASHTABLE('apples', 1.45, 'oranges', 0.75, 'tomatoes', 1.40, 'onions', 0.54, 'book', 1.40)
-=REMOVEKEY(loPrices, 'book') // book should not be in this list of prices.
-
-// ================================================================================
-// 30. ALEFT(tArray, tnExpression): creates an array with the index found on
-// tnExpression starting from left to right.
-// ================================================================================
-// Example
-
-laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
-laTwo = ALEFT(@laFruits, 2)
-? ANYTOSTR(@laTwo) // ["apple", "banana"]
-
-// ================================================================================
-// 31. ARIGHT(tArray, tnExpression): creates an array with the index found on
-// tnExpression starting from right to left.
-// ================================================================================
-// Example
-
-laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
-laTwo = ARIGHT(@laFruits, 2)
-? ANYTOSTR(@laTwo) // ["mango", "raspberry"]
-
-// ================================================================================
-// 32. ASUBSTR(tArray, tnFromExp, tnToExp): creates an array starting from index
-// found in tnFromExp until tnToExp.
-// ================================================================================
-// Example
-
-laFruits = ALIST("apple", "banana", "blackberry", "grape", "lemon", "mango", "raspberry")
-laLemonAndMango = ASUBSTR(@laFruits, 5, 2)
-? ANYTOSTR(@laLemonAndMango) // ["lemon", "mango"]
+foxpack add foxextends
 ```
+
+```foxpro
+SET PROCEDURE TO FoxExtends.prg ADDITIVE
+```
+
+That is all: call the functions. Nothing is compiled, nothing is left on `_VFP` or on disk.
+
+## Example
+
+```foxpro
+SET PROCEDURE TO FoxExtends.prg ADDITIVE
+
+? PRINTF("${0} has ${1} items\tTotal: ${2}", "Cart", 3, 59.90)
+? NEWGUID()                              && 4C4EC5EE-5B92-4E70-B9D8-D1A8A2FA2ABE
+
+LOCAL loColor, laCodes[1], loFiles, loFile
+loColor = ENUM("Red", "Green", "Blue")
+? loColor.Green                          && 2
+
+? MATCH("Invoice 2026-0042", "\d{4}-\d{4}")    && .T.
+? AMATCH(@laCodes, "A1 B22 C333", "\d+")       && 3: laCodes holds "1", "22", "333"
+
+loFiles = ADIROBJ("*.prg")
+FOR EACH loFile IN loFiles
+	? loFile.file_name, loFile.file_size
+ENDFOR
+```
+
+## API
+
+### PRINTF(cFormat [, v0, v1, ... v19])
+
+Returns `cFormat` with each `${n}` replaced by the n-th value, counting from 0, as `TRANSFORM()`
+writes it. The same placeholder may appear several times and in any order. A placeholder
+with no value stays as written.
+
+Escapes in `cFormat`: `\t` (tab), `\r`, `\n`, `\"`, `\'` and `\\` (one backslash). Any other
+`\x` stays as written. The values go in as they are: a value with `\n` in it is not escaped.
+
+```foxpro
+? PRINTF("${1}, ${0}", "Ana", "Hello")       && Hello, Ana
+? PRINTF("C:\\temp\\${0}", "out.txt")        && C:\temp\out.txt
+```
+
+### NEWGUID()
+
+A new GUID as 36 characters, without braces: `"4C4EC5EE-5B92-4E70-B9D8-D1A8A2FA2ABE"`.
+
+### ENUM(cName1 [, cName2, ... cName26])
+
+An object with one property per name, numbered from 1. A name that is not a valid identifier,
+or that is repeated, raises an error.
+
+```foxpro
+loStatus = ENUM("Draft", "Sent", "Paid")
+IF lnStatus = loStatus.Paid
+```
+
+### REVERSE(cText)
+
+The text backwards, spaces included: `REVERSE("ab ")` is `" ba"`.
+
+### MATCH(cText, cPattern [, lCaseSensitive])
+
+`.T.` if the regular expression matches somewhere in the text. Case is ignored unless
+`lCaseSensitive` is `.T.`.
+
+### AMATCH(@aMatches, cText, cPattern [, lCaseSensitive])
+
+Fills the array with every match, in order, and returns how many. With no match it returns 0
+and leaves one empty element, like `ALINES()`.
+
+```foxpro
+LOCAL laEmails[1], lnI
+FOR lnI = 1 TO AMATCH(@laEmails, lcText, "[\w.]+@[\w.]+\.\w+")
+	? laEmails[lnI]
+NEXT
+```
+
+**`MATCH` and `AMATCH` need `VBScript.RegExp`**, which comes with Windows today but which
+Microsoft has announced it is retiring. On a machine without it they raise an error that says
+so. The pattern syntax is VBScript's (the same as JavaScript's); an invalid pattern raises an
+OLE error.
+
+### ADIROBJ([cFileSkeleton [, cAttribute [, nFlags]]])
+
+`ADIR()` as a `Collection` of objects, one per file, with `file_name`, `file_size`,
+`date_last_modified`, `time_last_modified` and `file_attributes`. The parameters are those
+of `ADIR()`; with none, every file of the current folder.
+
+### AFIELDSOBJ([cAlias | nWorkArea])
+
+`AFIELDS()` as a `Collection` of objects, one per field, with the 18 columns of `AFIELDS()`
+as properties: `name`, `field_type`, `field_width`, `decimal_places`, `null_allowed`,
+`code_page_translation_not_allowed`, `field_validation_expression`, `field_validation_text`,
+`field_default_value`, `table_validation_expression`, `table_validation_text`,
+`long_table_name`, `insert_trigger_expression`, `update_trigger_expression`,
+`delete_trigger_expression`, `table_comment`, `next_value_for_autoincrementing`,
+`step_for_autoincrementing`. The current work area when omitted.
+
+Both return a `Collection`, so [LinqVFP](https://github.com/Irwin1985/LinqVFP) queries them:
+
+```foxpro
+loQ = Linq(ADIROBJ("*.prg"))
+loQ.Where("x => x.file_size > 50000")
+```
+
+### SECRETBOX([cPrompt [, cCaption]])
+
+A modal dialog with a hidden text box. Returns what was typed (trimmed), or `""` if the person
+pressed Cancel. The caption is `_SCREEN.Caption` when omitted.
+
+```foxpro
+lcPassword = SECRETBOX("Password for the server:", "Sign in")
+```
+
+It waits for a person: do not call it from code that runs unattended (a service, a web
+request, a scheduled task).
+
+### FoxExtendsVersion()
+
+`"3.0.0"`.
+
+## Pitfalls
+
+- **Errors raise.** A wrong argument (a number where a text goes, an invalid `ENUM` name, a
+  bad pattern) raises a VFP error you can catch with `TRY`; nothing shows a message box,
+  except `SECRETBOX`, which is a dialog on purpose.
+- **`ADIROBJ` and `AFIELDSOBJ` return a Collection, not an array**: loop with
+  `FOR EACH loX IN loCollection`, or `FOR i = 1 TO loCollection.Count`.
+- **`AMATCH` needs the array by reference**: `AMATCH(@laMatches, ...)`, with the `@`.
+
+## Upgrading from 2.x
+
+3.0 keeps only what no other library of the stack does, and is MIT instead of GPL-3.
+
+- **No `newFoxExtends()`**: `SET PROCEDURE TO FoxExtends.prg` is enough. 2.x compiled the
+  library into `%TEMP%` on every start (about 0.5 s), left the `.fxp` there, hung three
+  objects on `_VFP` and showed message boxes on errors. The prefix and the `obj` mode are gone
+  with it.
+- **What moved, and where:**
+
+| 2.x | Use instead |
+|---|---|
+| `ALIST`, `APUSH`, `APOP`, `ASPLIT`, `AJOIN`, `ASLICE`, `ALEFT`, `ARIGHT`, `ASUBSTR`, `ACONCAT`, `AREVERSE`, `AUNIQUE`, `STRINGLIST`, `ARGS`, `APARAMS` | [FoxCollection](https://github.com/Irwin1985/FoxCollection): `TArray` |
+| `HASHTABLE`, `HASKEY`, `ADDKEY`, `REMOVEKEY`, `GETVALUE`, `PAIR` | FoxCollection: `TDictionary` |
+| `AMAP`, `AFILTER`, `AEVERY`, `FOREACH`, `AUNION`, `AINTERSECT`, `AEXCEPT` | [LinqVFP](https://github.com/Irwin1985/LinqVFP) |
+| `JSONTOSTR`, `STRTOJSON`, `SetFoxExtendsJsonProvider` | [JSONFox](https://github.com/Irwin1985/JSONFox) |
+| `ACLONE`, `AKEYS`, `CLAMP` | VFP itself: `ACOPY()`, `AMEMBERS()`, `SUBSTR()` |
+| `ANYTOSTR`, `AZIP` | Gone |
+
+- **Changed:** `AMATCH` fills an array by reference with every match and returns the count
+  (2.x returned one match, the last by default). `ADIROBJ` and `AFIELDSOBJ` return a
+  `Collection`. `REVERSE` keeps the spaces (2.x dropped the text after leading spaces).
+  `PRINTF` no longer escapes the values, and takes up to 20.
+
+## Tests
+
+From the repository folder:
+
+```
+foxproof run --prg tests\FoxExtendsTests.prg
+```
+
+## License
+
+MIT. See [LICENSE](LICENSE).

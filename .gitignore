@@ -1,5 +1,24 @@
-*.bak
+# Compilados de VFP. Se regeneran solos y, si se quedan viejos, GANAN al .prg:
+# VFP ejecuta el .FXP cuando es mas nuevo que el fuente, asi que uno versionado
+# es la forma mas barata de que alguien arregle algo y no vea el arreglo.
 *.fxp
-*.gif
-*.dbf
-*.fpt
+*.FXP
+*.app
+*.APP
+*.exe
+
+# Copias que deja el editor de VFP al guardar.
+*.bak
+*.BAK
+
+# Ruido que deja VFP al abrir la carpeta.
+*.err
+*.ERR
+foxuser.dbf
+foxuser.fpt
+bin/
+obj/
+publish*/
+node_modules/
+.claude/worktrees/
+*.log
